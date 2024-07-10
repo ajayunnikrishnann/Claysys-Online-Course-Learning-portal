@@ -2,22 +2,24 @@
 using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Data.SqlClient;
 using System.Data;
-using System.Linq;
-using System.Web;
+using System.Data.SqlClient;
 
 namespace Claysys_Online_Course_Learning_portal.DataAccess
 {
     public class UserDataAccess
     {
+
         private readonly string _connectionString = ConfigurationManager.ConnectionStrings["MyAppDbContext"].ConnectionString;
 
         public void InsertUser(User user)
         {
+            string query = "INSERT INTO Users (FirstName, LastName, DateOfBirth, Gender, Phone, Email, Address, State, City, Username, Password, ConfirmPassword) " +
+                   "VALUES (@FirstName, @LastName, @DateOfBirth, @Gender, @Phone, @Email, @Address, @State, @City, @Username, @Password, @ConfirmPassword)";
+           
             using (SqlConnection con = new SqlConnection(_connectionString))
             {
-                using (SqlCommand cmd = new SqlCommand("InsertUser", con))
+                using (SqlCommand cmd = new SqlCommand("sp_InsertUser", con))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@FirstName", user.FirstName);
@@ -30,8 +32,8 @@ namespace Claysys_Online_Course_Learning_portal.DataAccess
                     cmd.Parameters.AddWithValue("@State", user.State);
                     cmd.Parameters.AddWithValue("@City", user.City);
                     cmd.Parameters.AddWithValue("@Username", user.Username);
-                    cmd.Parameters.AddWithValue("@PasswordHash", user.PasswordHash);
-                    cmd.Parameters.AddWithValue("@ConfirmPasswordHash", user.ConfirmPasswordHash);
+                    cmd.Parameters.AddWithValue("@Password", user.Password);
+                    cmd.Parameters.AddWithValue("@ConfirmPassword", user.ConfirmPassword);
 
                     con.Open();
                     cmd.ExecuteNonQuery();
@@ -48,7 +50,7 @@ namespace Claysys_Online_Course_Learning_portal.DataAccess
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@Username", username);
-                    cmd.Parameters.AddWithValue("@PasswordHash", passwordHash);
+                    cmd.Parameters.AddWithValue("@Password", passwordHash);
 
                     con.Open();
                     using (SqlDataReader reader = cmd.ExecuteReader())
@@ -67,6 +69,36 @@ namespace Claysys_Online_Course_Learning_portal.DataAccess
                 }
             }
             return user;
+        }
+
+        public bool IsEmailAvailable(string email)
+        {
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                connection.Open();
+                string query = "SELECT COUNT(*) FROM Users WHERE Email = @Email";
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@Email", email);
+                    int count = (int)command.ExecuteScalar();
+                    return count == 0;
+                }
+            }
+        }
+
+        public bool IsUsernameAvailable(string username)
+        {
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                connection.Open();
+                string query = "SELECT COUNT(*) FROM Users WHERE Username = @Username";
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@Username", username);
+                    int count = (int)command.ExecuteScalar();
+                    return count == 0;
+                }
+            }
         }
     }
 }

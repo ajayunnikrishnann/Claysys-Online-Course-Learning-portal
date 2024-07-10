@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.ComponentModel.DataAnnotations;
 
 namespace Claysys_Online_Course_Learning_portal.Models
@@ -26,22 +23,22 @@ namespace Claysys_Online_Course_Learning_portal.Models
         public string Gender { get; set; }
 
         [Required]
-        [StringLength(15)]
+        [Phone]
         public string Phone { get; set; }
 
         [Required]
+        [StringLength(100)]
         [EmailAddress]
-        [StringLength(50)]
         public string Email { get; set; }
 
+        [Required]
+        [StringLength(200)]
         public string Address { get; set; }
 
         [Required]
-        [StringLength(50)]
         public string State { get; set; }
 
         [Required]
-        [StringLength(50)]
         public string City { get; set; }
 
         [Required]
@@ -49,12 +46,13 @@ namespace Claysys_Online_Course_Learning_portal.Models
         public string Username { get; set; }
 
         [Required]
+        [StringLength(256)]
         [DataType(DataType.Password)]
-        public string PasswordHash { get; set; }
+        public string Password { get; set; }
 
         [Required]
+        [StringLength(256)]
         [DataType(DataType.Password)]
-        [Compare("PasswordHash", ErrorMessage = "The password and confirmation password do not match.")]
-        public string ConfirmPasswordHash { get; set; }
+        public string ConfirmPassword { get; set; }
     }
 }

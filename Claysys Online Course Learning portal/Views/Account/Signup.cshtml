@@ -7,108 +7,169 @@
 <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="~/Scripts/validation.js"></script> <!-- Include your validation.js script -->
 
-<!------ Include the above in your HEAD tag ---------->
 <div class="background-section">
-    <div class="container register">
-        <div class="row"> 
-            <div class="col-md-3 register-left">
-                <img src="https://image.ibb.co/n7oTvU/logo_white.png" alt="" />
-                <h3>Welcome</h3>
-                <p>You are 30 seconds away from earning your own money!</p>
-                <input type="submit" name="" value="Login" /><br />
-            </div>
-            <div class="col-md-9 register-right">
-                @using (Html.BeginForm("Signup", "Account", FormMethod.Post, new { @class = "register-form" }))
-                {
-                    @Html.AntiForgeryToken()
-
-
-
-                    <div class="tab-content" id="myTabContent">
-                        <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
-                            <h1 style="text-align:center;padding-top: 10px">Signup</h1>
-
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        @Html.LabelFor(model => model.FirstName, htmlAttributes: new { @class = "control-label" })
-                                        @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control", placeholder = "First Name *" } })
-                                        @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
-                                    </div>
-
-                                    <div class="form-group">
-                                        @Html.LabelFor(model => model.LastName, htmlAttributes: new { @class = "control-label" })
-                                        @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @class = "form-control", placeholder = "Last Name *" } })
-                                        @Html.ValidationMessageFor(model => model.LastName, "", new { @class = "text-danger" })
-                                    </div>
-
-                                    <div class="form-group">
-                                        @Html.LabelFor(model => model.PasswordHash, htmlAttributes: new { @class = "control-label" })
-                                        @Html.PasswordFor(model => model.PasswordHash, new { @class = "form-control", placeholder = "Password *" })
-                                        @Html.ValidationMessageFor(model => model.PasswordHash, "", new { @class = "text-danger" })
-                                    </div>
-
-                                    <div class="form-group">
-                                        @Html.LabelFor(model => model.ConfirmPasswordHash, htmlAttributes: new { @class = "control-label" })
-                                        @Html.PasswordFor(model => model.ConfirmPasswordHash, new { @class = "form-control", placeholder = "Confirm Password *" })
-                                        @Html.ValidationMessageFor(model => model.ConfirmPasswordHash, "", new { @class = "text-danger" })
-                                    </div>
-                                </div>
-
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "control-label" })
-                                        @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control", placeholder = "Your Email *" } })
-                                        @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
-                                    </div>
-
-                                    <div class="form-group">
-                                        @Html.LabelFor(model => model.Phone, htmlAttributes: new { @class = "control-label" })
-                                        @Html.EditorFor(model => model.Phone, new { htmlAttributes = new { @class = "form-control", placeholder = "Your Phone *" } })
-                                        @Html.ValidationMessageFor(model => model.Phone, "", new { @class = "text-danger" })
-                                    </div>
-
-                                    <div class="form-group">
-                                        <div class="maxl">
-                                            <label class="radio inline">
-                                                @Html.RadioButtonFor(model => model.Gender, "male", new { id = "genderMale" })
-                                                <span> Male </span>
-                                            </label>
-                                            <label class="radio inline">
-                                                @Html.RadioButtonFor(model => model.Gender, "female", new { id = "genderFemale" })
-                                                <span> Female </span>
-                                            </label>
-                                        </div>
-                                    </div>
-
-                                    <!-- Add more fields as needed -->
-
-                                    <input type="submit" class="btnRegister" value="Register" />
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="tab-pane fade show" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-                            <h3 class="register-heading">Apply as a Hirer</h3>
-
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <!-- Add fields for hirer registration -->
-                                </div>
-
-                                <div class="col-md-6">
-                                    <!-- Add fields for hirer registration -->
-                                </div>
-                            </div>
-                        </div>
+    <div class="signup-form">
+        @using (Html.BeginForm("Signup", "Account", FormMethod.Post, new { id = "signup-form" }))
+        {
+            <h2 class="signupcolor">Signup</h2>
+            <div class="content">
+                <div class="input-row">
+                    <div class="inputbox">
+                        @Html.LabelFor(m => m.FirstName)
+                        @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control", name = "FirstName" })
+                        @Html.ValidationMessageFor(m => m.FirstName, "", new { @class = "text-danger" })
                     </div>
-                }
+
+                    <div class="inputbox">
+                        @Html.LabelFor(m => m.LastName)
+                        @Html.TextBoxFor(m => m.LastName, new { @class = "form-control", name = "LastName" })
+                        @Html.ValidationMessageFor(m => m.LastName, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="input-row">
+                    <div class="inputbox">
+                        @Html.LabelFor(m => m.DateOfBirth)
+                        @Html.TextBoxFor(m => m.DateOfBirth, new { @type = "date", @class = "form-control", @onchange = "calculateAge()", name = "DateOfBirth" })
+                        @Html.ValidationMessageFor(m => m.DateOfBirth, "", new { @class = "text-danger" })
+                    </div>
+
+                    <div class="inputbox">
+                        @Html.Label("Age")
+                        <input type="number" id="age" class="form-control" readonly />
+                    </div>
+                </div>
+
+                <div class="input-row">
+                    <div class="inputbox">
+                        @Html.LabelFor(m => m.Gender)
+                        <div class="radio-group">
+                            @Html.RadioButtonFor(m => m.Gender, "Male", new { @name = "Gender" }) Male
+                            @Html.RadioButtonFor(m => m.Gender, "Female", new { @name = "Gender" }) Female
+                            @Html.RadioButtonFor(m => m.Gender, "Other", new { @name = "Gender" }) Other
+                        </div>
+                        @Html.ValidationMessageFor(m => m.Gender, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="input-row">
+                    <div class="inputbox">
+                        @Html.LabelFor(m => m.Phone)
+                        @Html.TextBoxFor(m => m.Phone, new { @class = "form-control", name = "Phone" })
+                        @Html.ValidationMessageFor(m => m.Phone, "", new { @class = "text-danger" })
+                    </div>
+
+                    <div class="inputbox">
+                        @Html.LabelFor(m => m.Email)
+                        @Html.TextBoxFor(m => m.Email, new { @class = "form-control", name = "Email", @onblur = "checkEmail()" })
+                        <span id="email-validation-message" class="text-danger"></span>
+                        @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="input-row">
+                    <div class="inputbox">
+                        @Html.LabelFor(m => m.Address)
+                        @Html.TextBoxFor(m => m.Address, new { @class = "form-control", name = "Address" })
+                        @Html.ValidationMessageFor(m => m.Address, "", new { @class = "text-danger" })
+                    </div>
+
+                    <div class="inputbox">
+                        @Html.LabelFor(m => m.State)
+                        @Html.DropDownListFor(m => m.State, (IEnumerable<SelectListItem>)ViewBag.StateList, "Select State", new { @class = "form-control", name = "State", @onchange = "getCities()" })
+                        @Html.ValidationMessageFor(m => m.State, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="input-row">
+                    <div class="inputbox">
+                        @Html.LabelFor(m => m.City)
+                        @Html.DropDownListFor(m => m.City, (IEnumerable<SelectListItem>)ViewBag.CityList, "Select City", new { @class = "form-control", name = "City" })
+                        @Html.ValidationMessageFor(m => m.City, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="input-row">
+                    <div class="inputbox">
+                        @Html.LabelFor(m => m.Username)
+                        @Html.TextBoxFor(m => m.Username, new { @class = "form-control", name = "Username", @onblur = "checkUsername()" })
+                        <span id="username-validation-message" class="text-danger"></span>
+                        @Html.ValidationMessageFor(m => m.Username, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="input-row">
+                    <div class="inputbox">
+                        @Html.LabelFor(m => m.Password)
+                        @Html.PasswordFor(m => m.Password, new { @class = "form-control", name = "Password" })
+                        @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
+                    </div>
+
+                    <div class="inputbox">
+                        @Html.LabelFor(m => m.ConfirmPassword)
+                        @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control", name = "ConfirmPassword" })
+                        @Html.ValidationMessageFor(m => m.ConfirmPassword, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="input-row">
+                    <div class="inputbox">
+                        <input type="submit" class="btn btn-primary signup-button" value="Signup" />
+                    </div>
+                </div>
             </div>
-        </div>
+        }
     </div>
 </div>
 
-@section Scripts {
-    @Scripts.Render("~/bundles/jqueryval")
-}
+<script>
+    function calculateAge() {
+        var dob = document.getElementById('DateOfBirth').value;
+        if (dob) {
+            var today = new Date();
+            var birthDate = new Date(dob);
+            var age = today.getFullYear() - birthDate.getFullYear();
+            var monthDifference = today.getMonth() - birthDate.getMonth();
+            if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+            document.getElementById('age').value = age;
+        }
+    }
+
+    function checkEmail() {
+        var email = $('[name="Email"]').val();
+        $.post('/Account/CheckEmail', { email: email }, function (data) {
+            if (data.Available) {
+                $('#email-validation-message').text('');
+            } else {
+                $('#email-validation-message').text('Email is already taken');
+            }
+        });
+    }
+
+    function checkUsername() {
+        var username = $('[name="Username"]').val();
+        $.post('/Account/CheckUsername', { username: username }, function (data) {
+            if (data.Available) {
+                $('#username-validation-message').text('');
+            } else {
+                $('#username-validation-message').text('Username is already taken');
+            }
+        });
+    }
+
+    function getCities() {
+        var state = $('[name="State"]').val();
+        $.post('/Account/GetCities', { state: state }, function (data) {
+            var cityDropdown = $('[name="City"]');
+            cityDropdown.empty();
+            cityDropdown.append('<option value="">Select City</option>');
+            $.each(data, function (index, city) {
+                cityDropdown.append('<option value="' + city.Value + '">' + city.Text + '</option>');
+            });
+        });
+    }
+</script>

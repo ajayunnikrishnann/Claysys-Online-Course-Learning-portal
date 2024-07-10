@@ -5,18 +5,39 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<!-- Hero section -->
-<section class="hero-section">
-    <div class="container d-flex align-items-md-start justify-content-start fs-1 text-white flex-column">
-        <div class="claysys-text">
-            <h1>
-                New to Claysys? Lucky <span style="display:block">you. <span style="font-size: medium;">Courses start at ₹449. Get your new-student offer before it expires.</span></span>
-            </h1>
-        </div>
-    </div>
-</section>
+@section scripts {
+    <script>
+        var slideIndex = 0;
+        showSlides();
 
-<!-- Additional sections -->
-<section class="additional-image-section">
-    <!-- Your additional content here -->
-</section>
+        function showSlides() {
+            var i;
+            var slides = document.getElementsByClassName("mySlides");
+            for (i = 0; i < slides.length; i++) {
+                slides[i].style.display = "none";
+            }
+            slideIndex++;
+            if (slideIndex > slides.length) { slideIndex = 1 }
+            slides[slideIndex - 1].style.display = "block";
+            setTimeout(showSlides, 2000); // Change image every 1.5 seconds
+        }
+    </script>
+}
+
+<div class="slideshow-container">
+    <div class="mySlides fade">
+        <img src="@Url.Content("~/Content/images/slider1.jpeg")" style="width:100%">
+    </div>
+
+    <div class="mySlides fade">
+        <img src="@Url.Content("~/Content/images/slider2.jpeg")" style="width:100%">
+    </div>
+
+    <div class="mySlides fade">
+        <img src="@Url.Content("~/Content/images/slider3.jpeg")" style="width:100%">
+    </div>
+
+    <div class="mySlides fade">
+        <img src="@Url.Content("~/Content/images/slider4.jpeg")" style="width:100%">
+    </div>
+</div>

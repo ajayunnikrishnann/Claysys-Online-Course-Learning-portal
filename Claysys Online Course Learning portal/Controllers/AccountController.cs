@@ -1,6 +1,8 @@
-﻿using Claysys_Online_Course_Learning_portal.DataAccess;
-using Claysys_Online_Course_Learning_portal.Models;
+﻿using System.Collections.Generic;
 using System.Web.Mvc;
+using Claysys_Online_Course_Learning_portal.DataAccess;
+using Claysys_Online_Course_Learning_portal.Models;
+using System.Diagnostics;
 
 namespace Claysys_Online_Course_Learning_portal.Controllers
 {
@@ -9,14 +11,9 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
         private readonly UserDataAccess _userDataAccess = new UserDataAccess();
 
         [HttpGet]
-        public ActionResult Index()
-        {
-            return View();
-        }
-
-        [HttpGet]
         public ActionResult Signup()
         {
+            PopulateStateAndCityLists(); // Sync method for initial load
             return View();
         }
 
@@ -25,15 +22,14 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
         {
             if (ModelState.IsValid)
             {
-                // Hash the password
-                user.PasswordHash = HashPassword(user.PasswordHash);
-                user.ConfirmPasswordHash = user.PasswordHash;
+                user.Password = HashPassword(user.Password);
+                user.ConfirmPassword = user.Password;
 
-                // Save user to database
                 _userDataAccess.InsertUser(user);
-
                 return RedirectToAction("Login");
             }
+
+            PopulateStateAndCityLists(); // Sync method for redisplaying form
             return View(user);
         }
 
@@ -51,7 +47,6 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
 
             if (user != null)
             {
-                // Successful login, redirect to some secure page
                 return RedirectToAction("Index", "Home");
             }
             else
@@ -61,10 +56,103 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
             }
         }
 
+        [HttpPost]
+        public JsonResult CheckEmail(string value)
+        {
+            var dataAccess = new UserDataAccess();
+            bool isAvailable = dataAccess.IsEmailAvailable(value);
+            return Json(new { available = isAvailable });
+        }
+
+        [HttpPost]
+        public JsonResult CheckUsername(string value)
+        {
+            var dataAccess = new UserDataAccess();
+            bool isAvailable = dataAccess.IsUsernameAvailable(value);
+            return Json(new { available = isAvailable });
+        }
+
+
+        [HttpPost]
+        public JsonResult GetCities(string state)
+        {
+            var cities = GetCitiesByState(state); // Sync method
+            return Json(cities);
+        }
+
+        private void PopulateStateAndCityLists()
+        {
+            ViewBag.StateList = GetStates(); // Sync method
+            ViewBag.CityList = new List<SelectListItem>();
+        }
+
+        private List<SelectListItem> GetStates()
+        {
+            // Static list of states in India
+            var states = new List<SelectListItem>
+            {
+                new SelectListItem { Value = "Andhra Pradesh", Text = "Andhra Pradesh" },
+                new SelectListItem { Value = "Arunachal Pradesh", Text = "Arunachal Pradesh" },
+                new SelectListItem { Value = "Assam", Text = "Assam" },
+                new SelectListItem { Value = "Bihar", Text = "Bihar" },
+                new SelectListItem { Value = "Chhattisgarh", Text = "Chhattisgarh" },
+                new SelectListItem { Value = "Goa", Text = "Goa" },
+                new SelectListItem { Value = "Gujarat", Text = "Gujarat" },
+                new SelectListItem { Value = "Haryana", Text = "Haryana" },
+                new SelectListItem { Value = "Himachal Pradesh", Text = "Himachal Pradesh" },
+                new SelectListItem { Value = "Jharkhand", Text = "Jharkhand" },
+                new SelectListItem { Value = "Karnataka", Text = "Karnataka" },
+                new SelectListItem { Value = "Kerala", Text = "Kerala" },
+                new SelectListItem { Value = "Madhya Pradesh", Text = "Madhya Pradesh" },
+                new SelectListItem { Value = "Maharashtra", Text = "Maharashtra" },
+                new SelectListItem { Value = "Manipur", Text = "Manipur" },
+                new SelectListItem { Value = "Meghalaya", Text = "Meghalaya" },
+                new SelectListItem { Value = "Mizoram", Text = "Mizoram" },
+                new SelectListItem { Value = "Nagaland", Text = "Nagaland" },
+                new SelectListItem { Value = "Odisha", Text = "Odisha" },
+                new SelectListItem { Value = "Punjab", Text = "Punjab" },
+                new SelectListItem { Value = "Rajasthan", Text = "Rajasthan" },
+                new SelectListItem { Value = "Sikkim", Text = "Sikkim" },
+                new SelectListItem { Value = "Tamil Nadu", Text = "Tamil Nadu" },
+                new SelectListItem { Value = "Telangana", Text = "Telangana" },
+                new SelectListItem { Value = "Tripura", Text = "Tripura" },
+                new SelectListItem { Value = "Uttar Pradesh", Text = "Uttar Pradesh" },
+                new SelectListItem { Value = "Uttarakhand", Text = "Uttarakhand" },
+                new SelectListItem { Value = "West Bengal", Text = "West Bengal" }
+            };
+            return states;
+        }
+
+        private List<SelectListItem> GetCitiesByState(string state)
+        {
+            // Static list of cities for selected state
+            var cities = new List<SelectListItem>();
+
+            switch (state)
+            {
+                case "Andhra Pradesh":
+                    cities.Add(new SelectListItem { Value = "Visakhapatnam", Text = "Visakhapatnam" });
+                    cities.Add(new SelectListItem { Value = "Vijayawada", Text = "Vijayawada" });
+                    cities.Add(new SelectListItem { Value = "Guntur", Text = "Guntur" });
+                    cities.Add(new SelectListItem { Value = "Nellore", Text = "Nellore" });
+                    cities.Add(new SelectListItem { Value = "Kurnool", Text = "Kurnool" });
+                    cities.Add(new SelectListItem { Value = "Rajahmundry", Text = "Rajahmundry" });
+                    cities.Add(new SelectListItem { Value = "Tirupati", Text = "Tirupati" });
+                    cities.Add(new SelectListItem { Value = "Kadapa", Text = "Kadapa" });
+                    cities.Add(new SelectListItem { Value = "Anantapur", Text = "Anantapur" });
+                    cities.Add(new SelectListItem { Value = "Eluru", Text = "Eluru" });
+                    break;
+                default:
+                    break;
+            }
+
+            return cities;
+        }
+
         private string HashPassword(string password)
         {
             // Implement a secure password hashing mechanism here
-            return password; // For demonstration, use plain password (insecure, do not use in production)
+            return password;
         }
     }
 }

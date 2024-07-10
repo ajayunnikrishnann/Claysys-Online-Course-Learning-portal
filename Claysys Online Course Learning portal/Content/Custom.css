@@ -1,5 +1,5 @@
 ﻿.navbar {
-    background-color: #fff;
+    background: linear-gradient(90deg, #FFC0CB, #DDA0DD, #B0E0E6);
     height: 60px;
     margin: 20px;
     border-radius: 16px;
@@ -137,146 +137,341 @@
 
 
 
+
+
+
+
+/* CSS for Slideshow */
+.slideshow-container {
+    max-width: 1500px;
+    position: relative;
+    margin-top: 82px;
+
+}
+
+.mySlides {
+    display: none;
+}
+
+.fade {
+    -webkit-animation-name: fade;
+    -webkit-animation-duration: 2s;
+    animation-name: fade;
+    animation-duration: 2s;
+}
+
+@-webkit-keyframes fade {
+    from {
+        opacity: .4
+    }
+
+    to {
+        opacity: 1
+    }
+}
+
+@keyframes fade {
+    from {
+        opacity: .4
+    }
+
+    to {
+        opacity: 1
+    }
+}
+
+
+
 /* Signup page */
 .background-section {
     background: url('../Content/images/banner4.jpg') no-repeat center center fixed;
     background-size: cover;
-    height: 100vh; /* Adjust height as needed */
+    height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
     padding: 20px;
 }
-
-.register {
-    background: -webkit-linear-gradient(left, #3931af, #00c6ff);
-    margin-top: 50px;
-    padding: 2%; /* Adjust padding as needed */
-    max-width: 600px; /* Set maximum width */
-    margin: auto; /* Center the form */
-    border-radius: 10px; /* Rounded corners */
-    box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.2);
-
-}
-
-.container register {
-    margin-top: 65px;
-    height: 86vh;
-}
-
-.register-left {
+.signup-form {
+    background: rgba(255, 255, 255, 0.5);
+    padding: 12px;
+    border-radius: 10px;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    width: 100%;
     text-align: center;
-    color: #fff;
-    margin-top: 4%;
+    font-size: 14px;
+    max-height: 76vh;
+    overflow-y: auto;
+    margin-top: 90px;
 }
 
-    .register-left input {
-        border: none;
-        border-radius: 1.5rem;
-        padding: 1.5%;
-        width: 100%; /* Adjust width to fill the container */
-        max-width: 400px; /* Set maximum width */
-        background: #f8f9fa;
-        font-weight: bold;
-        color: #383d41;
-        margin-top: 3%;
-        margin-bottom: 3%;
-        cursor: pointer;
+    .signup-form::-webkit-scrollbar {
+        width: 4px;
     }
 
-.register-right {
-    background: #f8f9fa;
-    border-top-left-radius: 10% 50%;
-    border-bottom-left-radius: 10% 50%;
-    padding: 2%;
-}
-
-.register-left img {
-    margin-top: 10%;
-    margin-bottom: 5%;
-    width: 50%;
-    -webkit-animation: mover 2s infinite alternate;
-    animation: mover 1s infinite alternate;
-}
-
-@-webkit-keyframes mover {
-    0% {
-        transform: translateY(0);
+    .signup-form::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0.1);
     }
 
-    100% {
-        transform: translateY(-20px);
-    }
-}
-
-@keyframes mover {
-    0% {
-        transform: translateY(0);
+    .signup-form::-webkit-scrollbar-thumb {
+        background-color: #2aa4bd;
+        border-radius: 4px;
     }
 
-    100% {
-        transform: translateY(-20px);
+
+.content {
+    overflow-x: hidden;
+}
+
+.signup-form h2 {
+    margin-bottom: 2px;
+    font-size: 18px;
+}
+
+/* Input Styles */
+.inputbox {
+    margin-bottom: 5px;
+    text-align: left;
+}
+
+    .inputbox label {
+        display: block;
+        margin-bottom: 3px;
+        font-size: 12px;
+        width: 100%
     }
+
+    .inputbox input,
+    .inputbox select {
+        width: calc(100% - 18px);
+        padding: 8px;
+        margin: 0 auto;
+        display: block;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 12px;
+        background-color: transparent;
+        box-sizing: border-box;
+    }
+
+        .inputbox input:focus, .inputbox select:focus {
+            background-color: rgb(184, 221, 204);
+            outline: none;
+        }
+
+.input-row {
+    display: block;
+    justify-content: space-between;
 }
 
-.register-left p {
-    font-weight: lighter;
-    padding: 8%;
-    margin-top: -9%;
-}
+    .input-row .inputbox {
+        width: 100%;
+        margin-bottom: 10px
+    }
 
-.register .register-form {
-    padding: 1%;
-    margin-top: 5%;
-}
-
-.btnRegister {
-    float: right;
-    margin-top: 5%;
+input[type="submit"] {
+    background-color: #08e2d7;
+    color: white;
     border: none;
-    border-radius: 1.5rem;
-    padding: 0.25%;
-    background: #0062cc;
-    color: #fff;
-    font-weight: 600;
-    width: 40%; /* Adjust width as needed */
-    max-width: 200px; /* Set maximum width */
+    border-radius: 4px;
+    padding: 8px 16px;
     cursor: pointer;
+    transition: background-color 0.3s;
+    width: 100%;
+    font-size: 14px;
+    margin-top: 10px;
 }
 
-.register .nav-tabs {
-    margin-top: 3%;
-    border: none;
-    background: #0062cc;
-    border-radius: 1.5rem;
-    width: 28%;
-    float: right;
-}
-
-    .register .nav-tabs .nav-link {
-        padding: 2%;
-        height: 34px;
-        font-weight: 600;
-        color: #fff;
-        border-top-right-radius: 1.5rem;
-        border-bottom-right-radius: 1.5rem;
+    input[type="submit"]:hover {
+        background-color: #5aa9bd;
     }
 
-        .register .nav-tabs .nav-link:hover {
-            border: none;
+.inputbox input::placeholder {
+    color: black;
+}
+
+.signupcolor {
+    color: #ffffff;
+}
+
+.radio-group {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 12px;
+}
+
+    .radio-group label {
+        display: flex;
+        align-items: center;
+        margin-right: 100px;
+        font-size: 12px;
+    }
+
+    .radio-group input {
+        margin: 0 1px 0 0;
+    }
+
+.signin-button {
+    color: white;
+    padding: 8px 16px;
+    cursor: pointer;
+    width: 100%;
+    font-size: 14px;
+    margin-top: 10px;
+}
+/* Error Styles */
+.error {
+    color: rgb(238, 7, 7);
+    font-size: 16px;
+}
+
+.menu-toggle {
+    display: none;
+    cursor: pointer;
+    color: white;
+    font-size: 18px;
+    margin-left: auto;
+}
+
+.star {
+    color: red;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .signup-form {
+        padding: 15px;
+    }
+
+        .signup-form h2 {
+            font-size: 16px;
         }
 
-        .register .nav-tabs .nav-link.active {
-            width: 100px;
-            color: #0062cc;
-            border: 2px solid #0062cc;
-            border-top-left-radius: 1.5rem;
-            border-bottom-left-radius: 1.5rem;
+    .inputbox label,
+    .inputbox input,
+    .inputbox select {
+        font-size: 14px;
+    }
+
+    .input-row .inputbox {
+        width: 100%;
+    }
+
+    .header nav ul {
+        display: none;
+        flex-direction: column;
+    }
+
+        .header nav ul.show {
+            display: flex;
         }
 
-.register-heading {
-    text-align: center;
-    margin-top: 8%;
-    margin-bottom: -15%;
-    color: #495057;
+    .header .menu-toggle {
+        display: block;
+    }
+}
+
+@media (max-width: 480px) {
+    .signup-form {
+        padding: 10px;
+    }
+
+        .signup-form h2 {
+            font-size: 14px;
+        }
+
+    .inputbox label,
+    .inputbox input,
+    .inputbox select {
+        font-size: 12px;
+    }
+
+    input[type="submit"] {
+        font-size: 12px;
+        padding: 6px 12px;
+    }
+}
+
+@media (min-width: 769px) {
+    .header .menu-toggle {
+        display: none;
+    }
+}
+
+
+
+/* Footer */
+footer {
+    background: linear-gradient(90deg, #FFC0CB, #DDA0DD, #B0E0E6);
+    color: #666777;
+    padding: 40px 0;
+    border-top: 3px solid #009970;
+    position: sticky;
+}
+
+    footer h6 {
+        font-weight: bold;
+        margin-bottom: 20px;
+        color: #009970;
+    }
+
+    footer a {
+        color: #666777;
+        transition: color 0.3s;
+    }
+
+        footer a:hover {
+            color: black;
+        }
+
+    footer .text-reset {
+        color: #666777;
+    }
+
+        footer .text-reset:hover {
+            color: black;
+        }
+
+    footer .me-4 {
+        margin-right: 1.5rem !important;
+    }
+
+    footer .fab {
+        font-size: 1.25rem;
+    }
+
+        footer .fab:hover {
+            color: black;
+        }
+
+    footer .container .row {
+        margin-bottom: 30px;
+    }
+
+        footer .container .row .col-md-3,
+        footer .container .row .col-md-2,
+        footer .container .row .col-md-4 {
+            margin-bottom: 30px;
+        }
+
+    footer .text-center {
+        background-color: rgba(0, 0, 0, 0.05);
+        padding: 20px 0;
+    }
+
+
+    /* validation*/
+.input-error {
+    border-color: red;
+}
+
+.input-success {
+    border-color: green;
+}
+
+.error-message {
+    color: red;
+    font-size: 0.9em;
 }
