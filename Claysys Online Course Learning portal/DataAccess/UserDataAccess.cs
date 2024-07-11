@@ -14,9 +14,7 @@ namespace Claysys_Online_Course_Learning_portal.DataAccess
 
         public void InsertUser(User user)
         {
-            string query = "INSERT INTO Users (FirstName, LastName, DateOfBirth, Gender, Phone, Email, Address, State, City, Username, Password, ConfirmPassword) " +
-                   "VALUES (@FirstName, @LastName, @DateOfBirth, @Gender, @Phone, @Email, @Address, @State, @City, @Username, @Password, @ConfirmPassword)";
-           
+            
             using (SqlConnection con = new SqlConnection(_connectionString))
             {
                 using (SqlCommand cmd = new SqlCommand("sp_InsertUser", con))
@@ -46,7 +44,7 @@ namespace Claysys_Online_Course_Learning_portal.DataAccess
             User user = null;
             using (SqlConnection con = new SqlConnection(_connectionString))
             {
-                using (SqlCommand cmd = new SqlCommand("ValidateUser", con))
+                using (SqlCommand cmd = new SqlCommand("sp_ValidateUser", con))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@Username", username);
@@ -59,10 +57,48 @@ namespace Claysys_Online_Course_Learning_portal.DataAccess
                         {
                             user = new User
                             {
-                                UserID = (int)reader["UserID"],
+                                Username = reader["Username"].ToString(),
+                                Password = reader["Password"].ToString(),
+                                // Populate other properties as needed
+                            };
+                        }
+                    }
+                }
+            }
+            return user;
+        }
+
+
+        public User GetUserByUsername(string username)
+        {
+            User user = null;
+            using (SqlConnection con = new SqlConnection(_connectionString))
+            {
+                using (SqlCommand cmd = new SqlCommand("sp_GetUserByUsername", con))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@Username", username);
+
+                    con.Open();
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            user = new User
+                            {
+                                UserID = Convert.ToInt32(reader["UserID"]),
                                 FirstName = reader["FirstName"].ToString(),
                                 LastName = reader["LastName"].ToString(),
-                                Email = reader["Email"].ToString()
+                                DateOfBirth = Convert.ToDateTime(reader["DateOfBirth"]),
+                                Gender = reader["Gender"].ToString(),
+                                Phone = reader["Phone"].ToString(),
+                                Email = reader["Email"].ToString(),
+                                Address = reader["Address"].ToString(),
+                                State = reader["State"].ToString(),
+                                City = reader["City"].ToString(),
+                                Username = reader["Username"].ToString(),
+                                Password = reader["Password"].ToString(),
+                                ConfirmPassword = reader["ConfirmPassword"].ToString()
                             };
                         }
                     }

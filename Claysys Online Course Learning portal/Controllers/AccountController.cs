@@ -3,6 +3,10 @@ using System.Web.Mvc;
 using Claysys_Online_Course_Learning_portal.DataAccess;
 using Claysys_Online_Course_Learning_portal.Models;
 using System.Diagnostics;
+using BCrypt.Net;
+using System.Web;
+using System;
+using System.Web.Security;
 
 namespace Claysys_Online_Course_Learning_portal.Controllers
 {
@@ -42,12 +46,28 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
         [HttpPost]
         public ActionResult Login(string username, string password)
         {
-            var hashedPassword = HashPassword(password);
-            var user = _userDataAccess.ValidateUser(username, hashedPassword);
+            var user = _userDataAccess.GetUserByUsername(username);
 
-            if (user != null)
+            if (user != null && VerifyPassword(password, user.Password))
             {
-                return RedirectToAction("Index", "Home");
+                // Set the authentication cookie
+                FormsAuthentication.SetAuthCookie(user.Username, false);
+
+                // Create session
+                Session["UserID"] = user.UserID;
+                Session["Username"] = user.Username;
+
+                // Create a persistent login cookie if "Remember Me" is checked
+                if (Request.Form["rememberMe"] != null && Request.Form["rememberMe"].Equals("on"))
+                {
+                    var authTicket = new FormsAuthenticationTicket(1, user.Username, DateTime.Now, DateTime.Now.AddMonths(1), true, "");
+                    string encryptedTicket = FormsAuthentication.Encrypt(authTicket);
+                    var authCookie = new HttpCookie(FormsAuthentication.FormsCookieName, encryptedTicket);
+                    authCookie.Expires = authTicket.Expiration;
+                    Response.Cookies.Add(authCookie);
+                }
+
+                return RedirectToAction("Index", "Account");
             }
             else
             {
@@ -56,12 +76,48 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
             }
         }
 
+
+        [HttpGet]
+        public ActionResult Index()
+        {
+            if (Session["Username"] != null)
+            {
+                ViewBag.Username = Session["Username"].ToString();
+                return View();
+            }
+            else
+            {
+                return RedirectToAction("Login");
+            }
+        }
+
+
+
+
+
+
+        [AcceptVerbs(HttpVerbs.Get | HttpVerbs.Post)]
+        public ActionResult Logout()
+        {
+            // Clear session
+            Session.Abandon();
+
+            // Clear authentication cookie
+            FormsAuthentication.SignOut();
+
+            // Redirect to login page
+            return RedirectToAction("Login", "Account");
+        }
+
+
+
         [HttpPost]
         public JsonResult CheckEmail(string value)
         {
             var dataAccess = new UserDataAccess();
             bool isAvailable = dataAccess.IsEmailAvailable(value);
             return Json(new { available = isAvailable });
+
         }
 
         [HttpPost]
@@ -151,8 +207,12 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
 
         private string HashPassword(string password)
         {
-            // Implement a secure password hashing mechanism here
-            return password;
+            return BCrypt.Net.BCrypt.HashPassword(password);
+        }
+
+        private bool VerifyPassword(string password, string hashedPassword)
+        {
+            return BCrypt.Net.BCrypt.Verify(password, hashedPassword);
         }
     }
 }

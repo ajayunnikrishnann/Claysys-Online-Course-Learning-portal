@@ -108,3 +108,61 @@
         }
     }
 });
+
+
+
+
+
+
+// Login form validation
+const loginForm = document.getElementById('login-form');
+if (loginForm) {
+    const usernameField = loginForm.querySelector('input[name="username"]');
+    const passwordField = loginForm.querySelector('input[name="password"]');
+
+    loginForm.addEventListener('submit', function (event) {
+        let isValid = true;
+
+        // Validate Username
+        if (usernameField.value.trim() === '') {
+            showError(usernameField, 'Username is required.');
+            isValid = false;
+        } else {
+            showSuccess(usernameField);
+        }
+
+        // Validate Password
+        if (passwordField.value.trim() === '') {
+            showError(passwordField, 'Password is required.');
+            isValid = false;
+        } else {
+            showSuccess(passwordField);
+        }
+
+        if (!isValid) {
+            event.preventDefault(); // Prevent form submission if there are errors
+        }
+    });
+
+    function showError(field, message) {
+        field.classList.remove('input-success');
+        field.classList.add('input-error');
+        let error = field.nextElementSibling;
+        if (!error || !error.classList.contains('error-message')) {
+            error = document.createElement('div');
+            error.classList.add('error-message');
+            field.parentNode.insertBefore(error, field.nextSibling);
+        }
+        error.textContent = message;
+    }
+
+    function showSuccess(field) {
+        field.classList.remove('input-error');
+        field.classList.add('input-success');
+        let error = field.nextElementSibling;
+        if (error && error.classList.contains('error-message')) {
+            error.remove();
+        }
+    }
+}
+});
