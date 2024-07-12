@@ -1,0 +1,222 @@
+﻿.background-section {
+    background: url('../Content/images/Admin.jpg') no-repeat center center fixed;
+    background-size: cover;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.form-container {
+    background: rgba(255, 255, 255, 0.5);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+/* Existing styles */
+.navbar {
+    background: linear-gradient(90deg, #f7de6f, #98f76f, #6ff7e9);
+    height: 60px;
+    margin: 20px;
+    border-radius: 16px;
+    padding: 0.5rem;
+    transition: padding 0.3s ease, margin 0.3s ease;
+}
+
+@media (max-width: 991px) {
+    .navbar {
+        margin: 0;
+        padding: 0.5rem 1rem;
+    }
+}
+
+.navbar-brand {
+    font-weight: 500;
+    color: #009970;
+    font-size: 24px;
+    transition: 0.3s color;
+}
+
+.signup-button {
+    background-color: #009970;
+    color: #fff;
+    font-size: 14px;
+    padding: 8px 20px;
+    border-radius: 50px;
+    text-decoration: none;
+    transition: 0.3s background-color;
+}
+
+    .signup-button:hover {
+        background-color: #00b383;
+    }
+
+.navbar-toggler {
+    border: none;
+    font-size: 1.25rem;
+}
+
+    .navbar-toggler:focus, .btn-close:focus {
+        box-shadow: none;
+        outline: none;
+    }
+
+.nav-link {
+    color: #666777;
+    font-weight: 500;
+    position: relative;
+}
+
+    .nav-link:hover, .nav-link.active {
+        color: black;
+    }
+
+@media (min-width: 991px) {
+    .nav-link::before {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 0;
+        height: 2px;
+        background-color: #009970;
+        visibility: hidden;
+        transition: 0.3s ease-in-out;
+    }
+
+    .nav-link:hover::before, .nav-link.active::before {
+        width: 95%;
+        visibility: visible;
+    }
+}
+
+/* Footer */
+footer {
+    background: linear-gradient(90deg, #f7de6f, #98f76f, #6ff7e9);
+    color: #666777;
+    padding: 40px 0;
+    border-top: 3px solid #009970;
+    position: sticky;
+}
+
+    footer h6 {
+        font-weight: bold;
+        margin-bottom: 20px;
+        color: #009970;
+    }
+
+    footer a {
+        color: #666777;
+        transition: color 0.3s;
+    }
+
+        footer a:hover {
+            color: black;
+        }
+
+    footer .text-reset {
+        color: #666777;
+    }
+
+        footer .text-reset:hover {
+            color: black;
+        }
+
+    footer .me-4 {
+        margin-right: 1.5rem !important;
+    }
+
+    footer .fab {
+        font-size: 1.25rem;
+    }
+
+        footer .fab:hover {
+            color: black;
+        }
+
+    footer .container .row {
+        margin-bottom: 30px;
+    }
+
+        footer .container .row .col-md-3,
+        footer .container .row .col-md-2,
+        footer .container .row .col-md-4 {
+            margin-bottom: 30px;
+        }
+
+    footer .text-center {
+        background-color: rgba(0, 0, 0, 0.05);
+        padding: 20px 0;
+    }
+
+
+
+
+/* User Management */
+
+/* Common Styles */
+.bodyContainer {
+    background: url('../Content/images/pxfuel.jpg') no-repeat center center fixed;
+    background-size: cover;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+/* User Management Styles */
+.user-management-container {
+    background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white background */
+    padding: 20px;
+    margin: 100px auto;
+    width: 90%;
+    max-width: 1200px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+}
+
+    .user-management-container h2 {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+.user-management-box {
+    overflow-x: auto; /* Allows horizontal scroll for wide tables */
+}
+
+.user-management-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+    .user-management-table th,
+    .user-management-table td {
+        padding: 10px;
+        border: 1px solid #ddd;
+        text-align: left;
+    }
+
+    .user-management-table th {
+        background-color: #f4f4f4;
+    }
+
+    .user-management-table tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+
+.btn-danger {
+    background-color: #d9534f;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+    .btn-danger:hover {
+        background-color: #c9302c;
+    }

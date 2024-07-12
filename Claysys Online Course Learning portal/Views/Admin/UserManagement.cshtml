@@ -1,0 +1,56 @@
+﻿@model IEnumerable<Claysys_Online_Course_Learning_portal.Models.User>
+
+@{
+    ViewBag.Title = "User Management";
+    Layout = "~/Views/Shared/AdminLayout.cshtml";
+    <link href="~/Content/AdminSite.css" rel="stylesheet" />
+}
+<div class="bodyContainer">
+    <div class="user-management-container">
+        <h2>User Management</h2>
+
+        <div class="user-management-box">
+            <table class="user-management-table">
+                <thead>
+                    <tr>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Date of Birth</th>
+                        <th>Gender</th>
+                        <th>Phone</th>
+                        <th>Email</th>
+                        <th>Address</th>
+                        <th>State</th>
+                        <th>City</th>
+                        <th>Username</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var user in Model)
+                    {
+                        <tr>
+                            <td>@user.FirstName</td>
+                            <td>@user.LastName</td>
+                            <td>@user.DateOfBirth.ToShortDateString()</td>
+                            <td>@user.Gender</td>
+                            <td>@user.Phone</td>
+                            <td>@user.Email</td>
+                            <td>@user.Address</td>
+                            <td>@user.State</td>
+                            <td>@user.City</td>
+                            <td>@user.Username</td>
+                            <td>
+                                @using (Html.BeginForm("DeleteUser", "Admin", FormMethod.Post))
+                                {
+                                    @Html.Hidden("userId", user.UserID)
+                                    <input type="submit" value="Delete" class="btn btn-danger" />
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

@@ -101,12 +101,12 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
         {
             // Clear session
             Session.Abandon();
-
+             
             // Clear authentication cookie
             FormsAuthentication.SignOut();
 
             // Redirect to login page
-            return RedirectToAction("Login", "Account");
+            return RedirectToAction("Index", "Home");
         }
 
 

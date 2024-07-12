@@ -18,6 +18,13 @@ namespace Claysys_Online_Course_Learning_portal
                 url: "{controller}/{action}/{id}",
                 defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional }
             );
+
+            // Add route for AdminController
+            routes.MapRoute(
+           name: "Admin",
+           url: "Admin/{action}/{id}",
+           defaults: new { controller = "Admin", action = "Dashboard", id = UrlParameter.Optional }
+       );
         }
     }
 }

@@ -1,0 +1,42 @@
+﻿@model Claysys_Online_Course_Learning_portal.Models.Admin
+
+@{
+    ViewBag.Title = "Admin Signup";
+    Layout = "~/Views/Shared/AdminLayout.cshtml";
+}
+
+@using (Html.BeginForm("Signup", "Admin", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    <div class="background-section">
+        <div class="form-container">
+            <h3 class="form-header">Sign up</h3>
+            <div class="form-group">
+                @Html.LabelFor(m => m.Name)
+                @Html.TextBoxFor(m => m.Name, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.Name)
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(m => m.Email)
+                @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.Email)
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(m => m.PhoneNumber)
+                @Html.TextBoxFor(m => m.PhoneNumber, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.PhoneNumber)
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(m => m.Password)
+                @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.Password)
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(m => m.ConfirmPassword)
+                @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.ConfirmPassword)
+            </div>
+            <button type="submit" class="btn btn-primary">Sign up</button>
+        </div>
+    </div>
+}

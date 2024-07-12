@@ -1,0 +1,25 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewBag.Title - Admin Panel</title>
+    <link href="~/Content/Site.css" rel="stylesheet" type="text/css" />
+    @RenderSection("styles", required: false)
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li>@Html.ActionLink("Dashboard", "Index", "Admin")</li>
+                <li>@Html.ActionLink("Manage Users", "UserManagement", "Admin")</li>
+                <li>@Html.ActionLink("Create Admin", "CreateAdmin", "Admin")</li>
+                <li>@Html.ActionLink("Logout", "Logout", "Account")</li>
+            </ul>
+        </nav>
+    </header>
+    <div class="content-wrapper">
+        @RenderBody()
+    </div>
+    @RenderSection("scripts", required: false)
+</body>
+</html>
