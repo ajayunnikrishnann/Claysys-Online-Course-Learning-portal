@@ -1,0 +1,56 @@
+﻿@{
+    ViewBag.Title = "Contact Us";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us</title>
+    <link rel="stylesheet" href="~/Content/Contact.css"> <!-- Link to your external CSS file -->
+</head>
+<body>
+
+    
+    <!-- Main content container -->
+    <div class="container">
+        <!-- Contact form section -->
+        <div class="contact-section">
+            <h1>Contact Us</h1>
+            <!-- Contact form -->
+            <form action="#" method="post" onsubmit="return validateForm()">
+                <label for="username">Name</label>
+                <input type="text" id="username" name="username">
+                <span id="usernameError" class="error"></span>
+
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email">
+                <span id="emailError" class="error"></span>
+
+                <label for="phone">Phone Number</label>
+                <input type="tel" id="phone" name="phone">
+                <span id="phoneError" class="error"></span>
+
+                <label for="message">Message</label>
+                <textarea id="message" name="message" rows="6"></textarea>
+                <span id="messageError" class="error"></span>
+
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+        <!-- Address section -->
+        <div class="address-section">
+            <img src="~/Content/images/office1.jpg" alt="Office Image">
+            <h1>Claysys</h1>
+            <p><strong>Address:</strong></p>
+            <p>123 Health St.</p>
+            <p>Wellness City, WC 45678</p>
+            <p><strong>Phone:</strong> (123) 456-7890</p>
+            <p><strong>Email:</strong> contact@finddoctor.com</p>
+        </div>
+    </div>
+
+  
+</body>
+</html>

@@ -1,5 +1,6 @@
 ﻿document.addEventListener('DOMContentLoaded', function () {
     const form = document.getElementById('signup-form');
+   
     const fields = form.querySelectorAll('input, textarea, select');
     const validations = {
         'FirstName': {

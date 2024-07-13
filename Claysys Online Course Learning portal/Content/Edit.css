@@ -1,0 +1,78 @@
+﻿body {
+    background-image: url('images/background.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    font-family: Arial, sans-serif;
+    color: #fff;
+    margin: 0;
+    padding: 0;
+}
+
+h2 {
+    text-align: center;
+    margin-top: 30px; /* Adjusted margin for a bit more space */
+    color: #fff;
+    font-size: 24px; /* Slightly smaller font size */
+}
+
+.container {
+    background-color: rgba(0, 0, 0, 0.7); /* Slightly darker background */
+    padding: 20px; /* Slightly less padding */
+    border-radius: 6px; /* Slightly smaller rounded corners */
+    width: 45%; /* Slightly smaller width */
+    margin: 20px auto; /* Centered with less margin */
+    margin-top: 80px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3); /* Slightly less shadow */
+}
+
+.form-group {
+    margin-bottom: 12px; /* Reduced space between form elements */
+}
+
+.form-control {
+    width: 100%;
+    padding: 8px; /* Slightly less padding */
+    border-radius: 4px; /* Slightly smaller rounded corners */
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}
+
+.btn {
+    display: inline-block;
+    padding: 8px 15px; /* Slightly smaller padding */
+    margin: 4px; /* Reduced margin */
+    border-radius: 4px; /* Slightly smaller rounded corners */
+    text-decoration: none;
+    color: white;
+    text-align: center;
+    transition: background-color 0.3s ease;
+    white-space: nowrap;
+    font-size: 14px; /* Slightly smaller font size */
+}
+
+.btn-primary {
+    background-color: #007BFF;
+}
+
+.btn-secondary {
+    background-color: #6C757D;
+}
+
+.btn:hover {
+    opacity: 0.8;
+}
+
+.btn-wide {
+    width: 120px; /* Slightly narrower buttons */
+}
+
+label {
+    color: #fff;
+    font-size: 14px; /* Slightly smaller font size */
+}
+
+.text-danger {
+    color: #ff6b6b;
+    font-size: 12px; /* Slightly smaller font size */
+}

@@ -1,0 +1,51 @@
+﻿@model Claysys_Online_Course_Learning_portal.Models.Course
+
+@{
+    ViewBag.Title = "Create Course";
+    Layout = "~/Views/Shared/AdminLayout.cshtml";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewBag.Title</title>
+    <link rel="stylesheet" type="text/css" href="~/Content/Create.css" />
+</head>
+<body>
+    <div class="container">
+        <h2>Create Course</h2>
+
+        @using (Html.BeginForm("CreateCourse", "Admin", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            @Html.AntiForgeryToken()
+            <div class="form-group">
+                @Html.LabelFor(m => m.Title)
+                @Html.TextBoxFor(m => m.Title, new { @class = "form-control", placeholder = "Enter course title" })
+                @Html.ValidationMessageFor(m => m.Title, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(m => m.Description)
+                @Html.TextAreaFor(m => m.Description, new { @class = "form-control", placeholder = "Enter course description" })
+                @Html.ValidationMessageFor(m => m.Description, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(m => m.SmallVideoFile, "Upload Video")
+                <input type="file" name="SmallVideoFile" class="form-control" />
+                @Html.ValidationMessageFor(m => m.SmallVideoFile, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(m => m.ImageFile, "Upload Image")
+                <input type="file" name="ImageFile" class="form-control" />
+                @Html.ValidationMessageFor(m => m.ImageFile, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(m => m.ReferenceLinks)
+                @Html.TextBoxFor(m => m.ReferenceLinks, new { @class = "form-control", placeholder = "Enter reference links" })
+                @Html.ValidationMessageFor(m => m.ReferenceLinks, "", new { @class = "text-danger" })
+            </div>
+            <button type="submit" class="btn btn-primary btn-wide">Create</button>
+        }
+    </div>
+</body>
+</html>

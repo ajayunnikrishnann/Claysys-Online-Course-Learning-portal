@@ -14,6 +14,20 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
     {
         private readonly UserDataAccess _userDataAccess = new UserDataAccess();
 
+
+        
+       
+
+        public ActionResult About()
+        {
+            return View();
+        }
+
+        public ActionResult Contact()
+        {
+            return View();
+        }
+
         [HttpGet]
         public ActionResult Signup()
         {
@@ -67,7 +81,7 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
                     Response.Cookies.Add(authCookie);
                 }
 
-                return RedirectToAction("Index", "Account");
+                return RedirectToAction("Index");
             }
             else
             {
@@ -76,21 +90,21 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
             }
         }
 
-
         [HttpGet]
         public ActionResult Index()
         {
             if (Session["Username"] != null)
             {
                 ViewBag.Username = Session["Username"].ToString();
-                return View();
+                ViewBag.IsLoggedIn = true;
             }
             else
             {
-                return RedirectToAction("Login");
+                ViewBag.IsLoggedIn = false;
             }
-        }
 
+            return View();
+        }
 
 
 
@@ -101,12 +115,12 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
         {
             // Clear session
             Session.Abandon();
-             
+
             // Clear authentication cookie
             FormsAuthentication.SignOut();
 
             // Redirect to login page
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Index");
         }
 
 
