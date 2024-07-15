@@ -64,24 +64,17 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
 
             if (user != null && VerifyPassword(password, user.Password))
             {
-                // Set the authentication cookie
                 FormsAuthentication.SetAuthCookie(user.Username, false);
 
-                // Create session
+                var ticket = new FormsAuthenticationTicket(1, user.Username, DateTime.Now, DateTime.Now.AddMinutes(30), false, "User");
+                string encryptedTicket = FormsAuthentication.Encrypt(ticket);
+                var authCookie = new HttpCookie(".AspNetUserAuth", encryptedTicket);
+                Response.Cookies.Add(authCookie);
+
                 Session["UserID"] = user.UserID;
                 Session["Username"] = user.Username;
 
-                // Create a persistent login cookie if "Remember Me" is checked
-                if (Request.Form["rememberMe"] != null && Request.Form["rememberMe"].Equals("on"))
-                {
-                    var authTicket = new FormsAuthenticationTicket(1, user.Username, DateTime.Now, DateTime.Now.AddMonths(1), true, "");
-                    string encryptedTicket = FormsAuthentication.Encrypt(authTicket);
-                    var authCookie = new HttpCookie(FormsAuthentication.FormsCookieName, encryptedTicket);
-                    authCookie.Expires = authTicket.Expiration;
-                    Response.Cookies.Add(authCookie);
-                }
-
-                return RedirectToAction("Index");
+                return RedirectToAction("Index", "Account");
             }
             else
             {
@@ -113,16 +106,18 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
         [AcceptVerbs(HttpVerbs.Get | HttpVerbs.Post)]
         public ActionResult Logout()
         {
-            // Clear session
             Session.Abandon();
 
-            // Clear authentication cookie
             FormsAuthentication.SignOut();
+            var authCookie = Request.Cookies[".AspNetUserAuth"];
+            if (authCookie != null)
+            {
+                authCookie.Expires = DateTime.Now.AddDays(-1);
+                Response.Cookies.Add(authCookie);
+            }
 
-            // Redirect to login page
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", "Account");
         }
-
 
 
         [HttpPost]

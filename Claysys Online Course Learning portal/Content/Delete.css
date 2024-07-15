@@ -1,0 +1,36 @@
+﻿body {
+    background: url('/Content/images/background.jpg') no-repeat center center fixed;
+    background-size: cover;
+    font-family: Arial, sans-serif;
+    height: 100vh;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.delete-course-container {
+    background-color: rgba(255, 255, 255, 0.9); /* White background with transparency */
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 600px;
+    margin: 50px;
+    margin-top: 90px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+    text-align: center;
+}
+
+    .delete-course-container h2,
+    .delete-course-container h3 {
+     
+        margin-bottom: 20px;
+    }
+
+    .delete-course-container .dl-horizontal dt {
+        font-weight: bold;
+    }
+
+    .delete-course-container .btn {
+        margin-top: 20px;
+        width: 100%;
+    }

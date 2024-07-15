@@ -43,31 +43,50 @@
                 return View();
             }
 
-            [HttpPost]
-            public ActionResult Login(Admin admin)
+        [HttpPost]
+        public ActionResult Login(Admin admin)
+        {
+            var existingAdmin = _adminDataAccess.GetAdminByEmail(admin.Email);
+
+            if (existingAdmin != null && VerifyPassword(admin.Password, existingAdmin.Password))
             {
-                var existingAdmin = _adminDataAccess.GetAdminByEmail(admin.Email);
+                FormsAuthentication.SetAuthCookie(existingAdmin.Email, false);
 
-                if (existingAdmin != null && VerifyPassword(admin.Password, existingAdmin.Password))
-                {
-                    // Set the authentication cookie
-                    FormsAuthentication.SetAuthCookie(existingAdmin.Email, false);
+                var ticket = new FormsAuthenticationTicket(1, existingAdmin.Email, DateTime.Now, DateTime.Now.AddMinutes(30), false, "Admin");
+                string encryptedTicket = FormsAuthentication.Encrypt(ticket);
+                var authCookie = new HttpCookie(".AspNetAdminAuth", encryptedTicket);
+                Response.Cookies.Add(authCookie);
 
-                    // Create session
-                    Session["AdminID"] = existingAdmin.AdminID;
-                    Session["AdminName"] = existingAdmin.Name;
+                Session["AdminID"] = existingAdmin.AdminID;
+                Session["AdminName"] = existingAdmin.Name;
 
-                    return RedirectToAction("UserManagement");
-                }
-                else
-                {
-                    ModelState.AddModelError("", "Invalid email or password.");
-                    return View(admin);
-                }
+                return RedirectToAction("UserManagement");
+            }
+            else
+            {
+                ModelState.AddModelError("", "Invalid email or password.");
+                return View(admin);
+            }
+        }
+
+        public ActionResult Logout()
+        {
+            Session.Abandon();
+
+            FormsAuthentication.SignOut();
+            var authCookie = Request.Cookies[".AspNetAdminAuth"];
+            if (authCookie != null)
+            {
+                authCookie.Expires = DateTime.Now.AddDays(-1);
+                Response.Cookies.Add(authCookie);
             }
 
+            return RedirectToAction("Login", "Admin");
+        }
 
-            [HttpGet]
+
+
+        [HttpGet]
             public ActionResult Dashboard()
             {
                 if (Session["AdminName"] != null)

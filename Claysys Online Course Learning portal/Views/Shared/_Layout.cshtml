@@ -39,10 +39,10 @@
                     </ul>
                 </div>
             </div>
-            @if (User.Identity.IsAuthenticated)
+            @if (Session["Username"] != null)
             {
                 <div class="d-flex align-items-center">
-                    <span class="me-2">Welcome, @User.Identity.Name</span>
+                    <span class="me-2">Welcome, @Session["Username"]</span>
                     <a href="@Url.Action("Logout", "Account")" class="signup-button">Logout</a>
                 </div>
             }

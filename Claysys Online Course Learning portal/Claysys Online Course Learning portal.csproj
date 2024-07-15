@@ -138,6 +138,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AdminController.cs" />
+    <Compile Include="Controllers\CourseController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="DataAccess\AdminDataAccess.cs" />
     <Compile Include="DataAccess\CourseDataAccess.cs" />
@@ -146,6 +147,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\Admin.cs" />
+    <Compile Include="Models\ApplicationDbContext.cs" />
     <Compile Include="Models\Course.cs" />
     <Compile Include="Models\Review.cs" />
     <Compile Include="Models\User.cs" />
@@ -174,6 +176,7 @@
     <Content Include="Content\CourseManagement.css" />
     <Content Include="Content\Create.css" />
     <Content Include="Content\Custom.css" />
+    <Content Include="Content\Delete.css" />
     <Content Include="Content\Edit.css" />
     <Content Include="Content\Homepage.css" />
     <Content Include="favicon.ico" />
@@ -229,6 +232,7 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Content\images\" />
+    <Folder Include="Views\Course\" />
     <Folder Include="Views\User\" />
   </ItemGroup>
   <ItemGroup>
