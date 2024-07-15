@@ -188,20 +188,50 @@
                 return View(course);
             }
 
-            // POST: Admin/EditCourse
-            [HttpPost]
-            public ActionResult EditCourse(Course course)
+        // POST: Admin/EditCourse
+        // POST: Admin/EditCourse
+        [HttpPost]
+        public ActionResult EditCourse(Course course)
+        {
+            if (ModelState.IsValid)
             {
-                if (ModelState.IsValid)
+                // Handle file uploads (if any)
+                if (course.SmallVideoFile != null && course.SmallVideoFile.ContentLength > 0)
                 {
-                    _courseDataAccess.UpdateCourse(course);
-                    return RedirectToAction("CourseManagement"); // Redirect to course management page or another appropriate action
-                }
-                return View(course);
-            }
+                    string videoDirectory = Server.MapPath("~/Content/Videos");
+                    if (!Directory.Exists(videoDirectory))
+                    {
+                        Directory.CreateDirectory(videoDirectory);
+                    }
 
-            // GET: Admin/DeleteCourse/{courseId}
-            public ActionResult DeleteCourse(int courseId)
+                    string videoPath = Path.Combine(videoDirectory, Path.GetFileName(course.SmallVideoFile.FileName));
+                    course.SmallVideoFile.SaveAs(videoPath);
+                    course.SmallVideoPath = "/Content/Videos/" + Path.GetFileName(course.SmallVideoFile.FileName);
+                }
+
+                if (course.ImageFile != null && course.ImageFile.ContentLength > 0)
+                {
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        course.ImageFile.InputStream.CopyTo(memoryStream);
+                        byte[] imageBytes = memoryStream.ToArray();
+                        course.ImageBase64 = Convert.ToBase64String(imageBytes);
+                    }
+                }
+
+                _courseDataAccess.UpdateCourse(course);
+                return RedirectToAction("CourseManagement");
+            }
+            return View(course);
+        }
+
+
+
+
+
+
+        // GET: Admin/DeleteCourse/{courseId}
+        public ActionResult DeleteCourse(int courseId)
             {
                 Course course = _courseDataAccess.GetCourseById(courseId);
                 if (course == null)
@@ -219,5 +249,12 @@
                 return RedirectToAction("CourseManagement"); // Redirect to course management page or another appropriate action
             }
 
+        public ActionResult ViewCourseReviews(int courseId)
+        {
+            ViewBag.CourseTitle = _courseDataAccess.GetCourseById(courseId).Title;
+            var reviews = _courseDataAccess.GetReviewsByCourseId(courseId);
+            return View(reviews);
         }
+
+    }
     }

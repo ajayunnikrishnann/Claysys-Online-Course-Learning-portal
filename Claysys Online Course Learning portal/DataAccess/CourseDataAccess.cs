@@ -63,7 +63,8 @@ namespace Claysys_Online_Course_Learning_portal.DataAccess
                                 SmallVideoPath = reader["SmallVideoPath"].ToString(),
                                 ImageBase64 = reader["ImageBase64"].ToString(),
                                 ReferenceLinks = reader["ReferenceLinks"].ToString(),
-                                UserPurchasedCount = Convert.ToInt32(reader["UserPurchasedCount"])
+                                UserPurchasedCount = Convert.ToInt32(reader["UserPurchasedCount"]),
+                                AverageReviewScore = reader["AverageReviewScore"] != DBNull.Value ? (decimal)Convert.ToDouble(reader["AverageReviewScore"]) : 0 // Explicit conversion
                             };
 
                             courses.Add(course);
@@ -110,22 +111,44 @@ namespace Claysys_Online_Course_Learning_portal.DataAccess
         {
             using (SqlConnection con = new SqlConnection(_connectionString))
             {
-                string query = "UPDATE Courses SET Title = @Title, Description = @Description, SmallVideoPath = @SmallVideoPath, ImageBase64 = @ImageBase64, ReferenceLinks = @ReferenceLinks, UserPurchasedCount = @UserPurchasedCount WHERE CourseId = @CourseId";
+                string query = "UPDATE Courses SET Title = @Title, Description = @Description, ReferenceLinks = @ReferenceLinks, UserPurchasedCount = @UserPurchasedCount";
+
+                if (!string.IsNullOrEmpty(course.SmallVideoPath))
+                {
+                    query += ", SmallVideoPath = @SmallVideoPath";
+                }
+
+                if (!string.IsNullOrEmpty(course.ImageBase64))
+                {
+                    query += ", ImageBase64 = @ImageBase64";
+                }
+
+                query += " WHERE CourseId = @CourseId";
+
                 using (SqlCommand cmd = new SqlCommand(query, con))
                 {
                     cmd.Parameters.AddWithValue("@Title", course.Title);
                     cmd.Parameters.AddWithValue("@Description", course.Description);
-                    cmd.Parameters.AddWithValue("@SmallVideoPath", course.SmallVideoPath);
-                    cmd.Parameters.AddWithValue("@ImageBase64", course.ImageBase64);
                     cmd.Parameters.AddWithValue("@ReferenceLinks", course.ReferenceLinks);
                     cmd.Parameters.AddWithValue("@UserPurchasedCount", course.UserPurchasedCount);
                     cmd.Parameters.AddWithValue("@CourseId", course.CourseId);
+
+                    if (!string.IsNullOrEmpty(course.SmallVideoPath))
+                    {
+                        cmd.Parameters.AddWithValue("@SmallVideoPath", course.SmallVideoPath);
+                    }
+
+                    if (!string.IsNullOrEmpty(course.ImageBase64))
+                    {
+                        cmd.Parameters.AddWithValue("@ImageBase64", course.ImageBase64);
+                    }
 
                     con.Open();
                     cmd.ExecuteNonQuery();
                 }
             }
         }
+
 
         public void DeleteCourse(int courseId)
         {
@@ -139,6 +162,77 @@ namespace Claysys_Online_Course_Learning_portal.DataAccess
                     cmd.ExecuteNonQuery();
                 }
             }
+        }
+
+
+        public void AddReview(Review review)
+        {
+            using (SqlConnection con = new SqlConnection(_connectionString))
+            {
+                using (SqlCommand cmd = new SqlCommand("sp_AddReview", con))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@CourseId", review.CourseId);
+                    cmd.Parameters.AddWithValue("@UserId", review.UserId);
+                    cmd.Parameters.AddWithValue("@ReviewScore", review.ReviewScore);
+                    cmd.Parameters.AddWithValue("@Comment", review.Comment);
+
+                    con.Open();
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public void DeleteReview(int reviewId, string userId)
+        {
+            using (SqlConnection con = new SqlConnection(_connectionString))
+            {
+                using (SqlCommand cmd = new SqlCommand("sp_DeleteReview", con))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@ReviewId", reviewId);
+                    cmd.Parameters.AddWithValue("@UserId", userId);
+
+                    con.Open();
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public List<Review> GetReviewsByCourseId(int courseId)
+        {
+            var reviews = new List<Review>();
+
+            using (SqlConnection con = new SqlConnection(_connectionString))
+            {
+                using (SqlCommand cmd = new SqlCommand("sp_GetReviewsByCourseId", con))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@CourseId", courseId);
+
+                    con.Open();
+
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            var review = new Review
+                            {
+                                ReviewId = Convert.ToInt32(reader["ReviewId"]),
+                                CourseId = Convert.ToInt32(reader["CourseId"]),
+                                UserId = reader["UserId"].ToString(),
+                                ReviewScore = Convert.ToDouble(reader["ReviewScore"]),
+                                Comment = reader["Comment"].ToString(),
+                                CreatedAt = Convert.ToDateTime(reader["CreatedAt"])
+                            };
+
+                            reviews.Add(review);
+                        }
+                    }
+                }
+            }
+
+            return reviews;
         }
 
 

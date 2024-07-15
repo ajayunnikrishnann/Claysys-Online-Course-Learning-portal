@@ -8,55 +8,75 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title</title>
-    <link rel="stylesheet" type="text/css" href="~/Content/Edit.css" />
-   
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="~/Content/Edit.css" rel="stylesheet" />
 </head>
 <body>
-    <div class="container">
-        <h2>Edit Course</h2>
+    <div class="edit">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <div class="card mt-5">
+                        <div class="card-header text-center">
+                            <h2>Edit Course</h2>
+                        </div>
+                        <div class="card-body">
+                            @using (Html.BeginForm("EditCourse", "Admin", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                            {
+                                @Html.HiddenFor(model => model.CourseId)
+                                @Html.HiddenFor(model => model.SmallVideoPath)
+                                @Html.HiddenFor(model => model.ImageBase64)
 
-        @using (Html.BeginForm())
-        {
-            @Html.AntiForgeryToken()
-            @Html.HiddenFor(model => model.CourseId)
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.Title)
+                                    @Html.TextBoxFor(model => model.Title, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(model => model.Title, "", new { @class = "text-danger" })
+                                </div>
 
-            <div class="form-group">
-                @Html.LabelFor(model => model.Title)
-                @Html.EditorFor(model => model.Title, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Title, "", new { @class = "text-danger" })
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.Description)
+                                    @Html.TextAreaFor(model => model.Description, new { @class = "form-control", rows = 3 })
+                                    @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+                                </div>
+
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.ReferenceLinks)
+                                    @Html.TextBoxFor(model => model.ReferenceLinks, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(model => model.ReferenceLinks, "", new { @class = "text-danger" })
+                                </div>
+
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.SmallVideoFile)
+                                    <input type="file" name="SmallVideoFile" class="form-control-file" />
+                                    @if (!string.IsNullOrEmpty(Model.SmallVideoPath))
+                                    {
+                                        <p>Current video: <a href="@Url.Content(Model.SmallVideoPath)" target="_blank">View video</a></p>
+                                    }
+                                </div>
+
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.ImageFile)
+                                    <input type="file" name="ImageFile" class="form-control-file" />
+                                    @if (!string.IsNullOrEmpty(Model.ImageBase64))
+                                    {
+                                        <p>Current image:</p>
+                                        <img src="data:image;base64,@Model.ImageBase64" alt="Course Image" class="img-thumbnail" />
+                                    }
+                                </div>
+
+                                <button type="submit" class="btn btn-primary btn-block">Save</button>
+                            }
+
+                            <div class="mt-3">
+                                @Html.ActionLink("Back to List", "CourseManagement", null, new { @class = "btn btn-secondary btn-block" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-
-            <div class="form-group">
-                @Html.LabelFor(model => model.Description)
-                @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
-            </div>
-
-            <div class="form-group">
-                @Html.LabelFor(model => model.SmallVideoPath)
-                @Html.EditorFor(model => model.SmallVideoPath, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.SmallVideoPath, "", new { @class = "text-danger" })
-            </div>
-
-            <div class="form-group">
-                @Html.LabelFor(model => model.ImageBase64)
-                @Html.EditorFor(model => model.ImageBase64, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.ImageBase64, "", new { @class = "text-danger" })
-            </div>
-
-            <div class="form-group">
-                @Html.LabelFor(model => model.ReferenceLinks)
-                @Html.EditorFor(model => model.ReferenceLinks, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.ReferenceLinks, "", new { @class = "text-danger" })
-            </div>
-
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary btn-wide" />
-                @Html.ActionLink("Back to List", "CourseManagement", null, new { @class = "btn btn-secondary btn-wide" })
-            </div>
-        }
+        </div>
     </div>
 </body>
 </html>

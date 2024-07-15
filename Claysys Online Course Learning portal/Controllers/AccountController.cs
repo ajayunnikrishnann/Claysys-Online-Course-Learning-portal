@@ -8,15 +8,16 @@ using System.Web;
 using System;
 using System.Web.Security;
 
+
 namespace Claysys_Online_Course_Learning_portal.Controllers
 {
     public class AccountController : Controller
     {
         private readonly UserDataAccess _userDataAccess = new UserDataAccess();
+        private CourseDataAccess courseDataAccess = new CourseDataAccess();
 
 
-        
-       
+
 
         public ActionResult About()
         {
@@ -96,8 +97,10 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
                 ViewBag.IsLoggedIn = false;
             }
 
-            return View();
+            var courses = courseDataAccess.GetAllCourses();
+            return View(courses);
         }
+
 
 
 
@@ -223,5 +226,34 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
         {
             return BCrypt.Net.BCrypt.Verify(password, hashedPassword);
         }
+
+
+        [HttpPost]
+        public ActionResult AddReview(Review review)
+        {
+            review.UserId = User.Identity.Name; // Assuming User.Identity.Name uniquely identifies the user
+            review.CreatedAt = DateTime.Now;
+            courseDataAccess.AddReview(review);
+            return RedirectToAction("ViewDetail", new { id = review.CourseId });
+        }
+
+        [HttpPost]
+        public ActionResult DeleteReview(int reviewId, int courseId)
+        {
+            var userId = User.Identity.Name; // Assuming User.Identity.Name uniquely identifies the user
+            courseDataAccess.DeleteReview(reviewId, userId);
+            return RedirectToAction("ViewDetail", new { id = courseId });
+        }
+
+        public ActionResult ViewDetail(int id)
+        {
+            var course = courseDataAccess.GetCourseById(id);
+            if (course != null)
+            {
+                course.Reviews = courseDataAccess.GetReviewsByCourseId(id);
+            }
+            return View(course);
+        }
     }
 }
+

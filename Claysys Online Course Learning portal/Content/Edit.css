@@ -1,78 +1,100 @@
 ﻿body {
-    background-image: url('images/background.jpg');
+    background: url('../images/background.jpg') no-repeat center center fixed;
     background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
-    font-family: Arial, sans-serif;
-    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
     margin: 0;
-    padding: 0;
+    font-family: Arial, sans-serif;
 }
 
-h2 {
-    text-align: center;
-    margin-top: 30px; /* Adjusted margin for a bit more space */
-    color: #fff;
-    font-size: 24px; /* Slightly smaller font size */
+.edit .container {
+    padding: 20px;
 }
 
-.container {
-    background-color: rgba(0, 0, 0, 0.7); /* Slightly darker background */
-    padding: 20px; /* Slightly less padding */
-    border-radius: 6px; /* Slightly smaller rounded corners */
-    width: 45%; /* Slightly smaller width */
-    margin: 20px auto; /* Centered with less margin */
-    margin-top: 80px;
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3); /* Slightly less shadow */
+.card {
+    background-color: rgba(255, 255, 255, 0.95);
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+}
+
+.card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+    color: #343a40;
+    font-size: 28px;
+    font-weight: 600;
+    padding: 15px 20px;
+    border-radius: 10px 10px 0 0;
+}
+
+.card-body {
+    padding: 30px;
 }
 
 .form-group {
-    margin-bottom: 12px; /* Reduced space between form elements */
+    margin-bottom: 20px;
 }
 
 .form-control {
-    width: 100%;
-    padding: 8px; /* Slightly less padding */
-    border-radius: 4px; /* Slightly smaller rounded corners */
-    border: 1px solid #ccc;
-    box-sizing: border-box;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+    padding: 10px;
 }
 
-.btn {
-    display: inline-block;
-    padding: 8px 15px; /* Slightly smaller padding */
-    margin: 4px; /* Reduced margin */
-    border-radius: 4px; /* Slightly smaller rounded corners */
-    text-decoration: none;
-    color: white;
-    text-align: center;
-    transition: background-color 0.3s ease;
-    white-space: nowrap;
-    font-size: 14px; /* Slightly smaller font size */
+    .form-control:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.25);
+    }
+
+.form-control-file {
+    margin-top: 10px;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
 }
 
 .btn-primary {
-    background-color: #007BFF;
+    background-color: #007bff;
+    border-color: #007bff;
+    border-radius: 5px;
+    padding: 10px;
+    font-size: 16px;
+    font-weight: 600;
 }
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+        border-color: #004b9b;
+    }
 
 .btn-secondary {
-    background-color: #6C757D;
+    background-color: #6c757d;
+    border-color: #6c757d;
+    border-radius: 5px;
+    padding: 10px;
+    font-size: 16px;
+    font-weight: 600;
 }
 
-.btn:hover {
-    opacity: 0.8;
-}
-
-.btn-wide {
-    width: 120px; /* Slightly narrower buttons */
-}
-
-label {
-    color: #fff;
-    font-size: 14px; /* Slightly smaller font size */
-}
+    .btn-secondary:hover {
+        background-color: #5a6268;
+        border-color: #545b62;
+    }
 
 .text-danger {
-    color: #ff6b6b;
-    font-size: 12px; /* Slightly smaller font size */
+    color: #dc3545;
 }
+
+a {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+    a:hover {
+        text-decoration: underline;
+    }

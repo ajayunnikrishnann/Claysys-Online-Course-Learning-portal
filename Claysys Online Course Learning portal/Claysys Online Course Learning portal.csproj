@@ -179,6 +179,7 @@
     <Content Include="Content\Delete.css" />
     <Content Include="Content\Edit.css" />
     <Content Include="Content\Homepage.css" />
+    <Content Include="Content\Index.css" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
@@ -228,6 +229,7 @@
     <Content Include="Views\Admin\CreateCourse.cshtml" />
     <Content Include="Views\Admin\EditCourse.cshtml" />
     <Content Include="Views\Admin\DeleteCourse.cshtml" />
+    <Content Include="Views\Account\ViewDetail.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

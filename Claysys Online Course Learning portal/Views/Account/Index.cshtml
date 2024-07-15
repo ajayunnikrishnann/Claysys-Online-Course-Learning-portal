@@ -5,6 +5,10 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+@section styles {
+    <link href="~/Content/Index.css" rel="stylesheet" type="text/css" />
+}
+
 @section scripts {
     <script>
         var slideIndex = 0;
@@ -28,34 +32,37 @@
     <div class="mySlides fade">
         <img src="@Url.Content("~/Content/images/slider1.jpeg")" style="width:100%">
     </div>
-
     <div class="mySlides fade">
         <img src="@Url.Content("~/Content/images/slider2.jpeg")" style="width:100%">
     </div>
-
     <div class="mySlides fade">
         <img src="@Url.Content("~/Content/images/slider3.jpeg")" style="width:100%">
     </div>
-
     <div class="mySlides fade">
         <img src="@Url.Content("~/Content/images/slider4.jpeg")" style="width:100%">
     </div>
 </div>
 
-
-<div class="container">
-    <div class="row">
-        @foreach (var course in Model)
-        {
-            <div class="col-md-4 mb-4">
-                <div class="card">
-                    <img src="@($"data:image/png;base64,{course.ImageBase64}")" class="card-img-top" alt="@course.Title">
-                    <div class="card-body">
-                        <h5 class="card-title">@course.Title</h5>
-                        <a href="@Url.Action("Details", "Course", new { id = course.CourseId })" class="btn btn-primary">View Details</a>
-                    </div>
-                </div>
+<div class="course-container">
+    @foreach (var course in Model)
+    {
+        <div class="course-card">
+            <img src="data:image/png;base64,@course.ImageBase64" alt="@course.Title" class="course-image" />
+            <h3>@course.Title</h3>
+            <div class="course-reviews">
+                @for (int i = 0; i < 5; i++)
+                {
+                    if (i < course.AverageReviewScore)
+                    {
+                        <span class="fa fa-star checked"></span>
+                    }
+                    else
+                    {
+                        <span class="fa fa-star"></span>
+                    }
+                }
             </div>
-        }
-    </div>
+            <a href="@Url.Action("ViewDetail", "Account", new { id = course.CourseId })" class="btn btn-primary">View Detail</a>
+        </div>
+    }
 </div>

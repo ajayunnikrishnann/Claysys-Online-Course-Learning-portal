@@ -12,15 +12,20 @@ namespace Claysys_Online_Course_Learning_portal.Models
         public int ReviewId { get; set; }
 
         [Required]
-        [StringLength(500)]
-        public string Content { get; set; }
+        public int CourseId { get; set; }
 
         [Required]
-        [Range(1, 5)]
-        public int Rating { get; set; }
+        public string UserId { get; set; }
 
-        public int CourseId { get; set; } // Foreign key
+        [Required]
+        [Range(1, 5, ErrorMessage = "Review score must be between 1 and 5.")]
+        public double ReviewScore { get; set; }
 
-        public virtual Course Course { get; set; } // Navigation property
+
+        [Required]
+        [StringLength(1000, ErrorMessage = "Comment cannot be longer than 1000 characters.")]
+        public string Comment { get; set; }
+
+        public DateTime CreatedAt { get; set; }
     }
 }

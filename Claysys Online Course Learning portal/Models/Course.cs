@@ -26,6 +26,8 @@ namespace Claysys_Online_Course_Learning_portal.Models
 
         public int UserPurchasedCount { get; set; } // Number of users who purchased the course
 
+        public decimal AverageReviewScore { get; set; }
+
         // Navigation properties
         public virtual ICollection<Review> Reviews { get; set; } // Course reviews
 
