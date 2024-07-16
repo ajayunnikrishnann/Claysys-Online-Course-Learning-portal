@@ -1,0 +1,204 @@
+﻿/* Course Detail Container */
+.course-detail-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    margin-top:90px;
+}
+
+    /* Course Title */
+    .course-detail-container h2 {
+        font-size: 2em;
+        margin-bottom: 10px;
+        color: #333;
+        text-align: center;
+    }
+
+/* Video Container */
+.video-container {
+    margin: 20px 0;
+    text-align: center;
+}
+
+    .video-container video {
+        max-width: 100%;
+        height: auto;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+/* Course Description */
+.course-description {
+    margin-bottom: 20px;
+    font-size: 1em;
+    line-height: 1.6;
+    color: #555;
+}
+
+/* Reference Links */
+.reference-links {
+    margin-bottom: 30px;
+}
+
+    .reference-links h4 {
+        font-size: 1.2em;
+        color: #333;
+        margin-bottom: 10px;
+    }
+
+    .reference-links p {
+        font-size: 1em;
+        color: #007bff;
+        text-decoration: none;
+    }
+
+/* Reviews */
+.reviews {
+    margin-bottom: 30px;
+}
+
+    .reviews h3 {
+        font-size: 1.5em;
+        color: #333;
+        margin-bottom: 20px;
+        border-bottom: 2px solid #007bff;
+        padding-bottom: 10px;
+    }
+
+/* Review */
+.review {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+    .review p {
+        font-size: 1em;
+        color: #555;
+        margin-bottom: 10px;
+    }
+
+    .review .rating {
+        margin-bottom: 10px;
+    }
+
+        .review .rating .fa-star {
+            color: #c4c2b7;
+            font-size: 1.2em;
+        }
+
+            .review .rating .fa-star.checked {
+                color: #ffcc00;
+            }
+
+    .review small {
+        font-size: 0.9em;
+        color: #888;
+    }
+
+/* Add/Edit Review Form */
+.add-review {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+    .add-review h3 {
+        font-size: 1.5em;
+        color: #333;
+        margin-bottom: 15px;
+        border-bottom: 2px solid #007bff;
+        padding-bottom: 10px;
+    }
+
+    .add-review .form-group {
+        margin-bottom: 15px;
+    }
+
+        .add-review .form-group label {
+            font-weight: bold;
+            color: #333;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .add-review .form-group .form-control {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+            .add-review .form-group .form-control:focus {
+                border-color: #007bff;
+                box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+            }
+
+    .add-review .btn-primary {
+        background-color: #007bff;
+        border: none;
+        color: #fff;
+        padding: 10px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+        .add-review .btn-primary:hover {
+            background-color: #0056b3;
+        }
+
+/* Edit Review Button */
+.btn-primary.btn-sm {
+    background-color: #007bff;
+    border: none;
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+    .btn-primary.btn-sm:hover {
+        background-color: #0056b3;
+    }
+
+/* Delete Review Button */
+.btn-danger.btn-sm {
+    background-color: #dc3545;
+    border: none;
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+    .btn-danger.btn-sm:hover {
+        background-color: #c82333;
+    }
+
+/* Edit Review Modal */
+#editReviewModal .modal-dialog {
+    max-width: 500px;
+}
+
+#editReviewModal .modal-content {
+    padding: 20px;
+}
+
+#editReviewModal .modal-header {
+    border-bottom: 1px solid #ddd;
+}
+
+#editReviewModal .modal-title {
+    color: #333;
+}
+
+#editReviewModal .modal-body {
+    padding: 20px;
+}

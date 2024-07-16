@@ -98,8 +98,16 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
             }
 
             var courses = courseDataAccess.GetAllCourses();
+
+            foreach (var course in courses)
+            {
+                course.Reviews = courseDataAccess.GetReviewsByCourseId(course.CourseId);
+                Debug.WriteLine($"Course: {course.Title}, AverageReviewScore: {course.AverageReviewScore}, ReviewCount: {course.Reviews.Count}");
+            }
+
             return View(courses);
         }
+
 
 
 
@@ -228,21 +236,40 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
         }
 
 
-        [HttpPost]
-        public ActionResult AddReview(Review review)
-        {
-            review.UserId = User.Identity.Name; // Assuming User.Identity.Name uniquely identifies the user
-            review.CreatedAt = DateTime.Now;
-            courseDataAccess.AddReview(review);
-            return RedirectToAction("ViewDetail", new { id = review.CourseId });
-        }
+
 
         [HttpPost]
         public ActionResult DeleteReview(int reviewId, int courseId)
         {
             var userId = User.Identity.Name; // Assuming User.Identity.Name uniquely identifies the user
-            courseDataAccess.DeleteReview(reviewId, userId);
+            if (courseDataAccess.IsReviewOwner(reviewId, userId))
+            {
+                courseDataAccess.DeleteReview(reviewId, userId);
+            }
             return RedirectToAction("ViewDetail", new { id = courseId });
+        }
+
+        [HttpPost]
+        public ActionResult EditReview(AddReviewViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var review = new Review
+                {
+                    ReviewId = model.ReviewId,
+                    CourseId = model.CourseId,
+                    ReviewScore = model.ReviewScore,
+                    Comment = model.Comment,
+                    UserId = User.Identity.Name // Assuming User.Identity.Name uniquely identifies the user
+                };
+
+                if (courseDataAccess.IsReviewOwner(model.ReviewId, User.Identity.Name))
+                {
+                    courseDataAccess.UpdateReview(review);
+                }
+                return RedirectToAction("ViewDetail", new { id = model.CourseId });
+            }
+            return View(model);
         }
 
         public ActionResult ViewDetail(int id)
@@ -254,6 +281,38 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
             }
             return View(course);
         }
+
+
+        [HttpPost]
+        public ActionResult AddReview(AddReviewViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var course = courseDataAccess.GetCourseById(model.CourseId);
+                if (course == null)
+                {
+                    return HttpNotFound();
+                }
+
+                var review = new Review
+                {
+                    CourseId = model.CourseId,
+                    ReviewScore = model.ReviewScore,
+                    Comment = model.Comment,
+                    UserId = User.Identity.Name // Assuming User.Identity.Name uniquely identifies the user
+                };
+
+                courseDataAccess.AddReview(review);
+
+                return RedirectToAction("ViewDetail", new { id = model.CourseId });
+            }
+
+            // Handle the case where the model state is invalid
+            return View(model);
+        }
+
+       
+
     }
 }
 

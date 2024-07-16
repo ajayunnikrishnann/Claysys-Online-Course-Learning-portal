@@ -1,0 +1,51 @@
+﻿@model Claysys_Online_Course_Learning_portal.Models.Course
+
+@{
+    ViewBag.Title = "Course Reviews";
+    Layout = "~/Views/Shared/AdminLayout.cshtml";
+}
+
+<div class="container">
+    <h2>Reviews for @Model.Title</h2>
+    <link rel="stylesheet" type="text/css" href="~/Content/CourseReviewsAdmin.css" />
+    <a href="@Url.Action("CourseManagement", "Admin")" class="btn btn-secondary">Back to Course Management</a>
+
+    @if (Model.Reviews != null && Model.Reviews.Any())
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>User</th>
+                    <th>Comment</th>
+                    <th>Rating</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var review in Model.Reviews)
+                {
+                    <tr>
+                        <td>@review.UserId</td>
+                        <td>@review.Comment</td>
+                        <td>
+                            @for (int i = 0; i < 5; i++)
+                            {
+                                if (i < review.ReviewScore)
+                                {
+                                    <span class="fa fa-star checked"></span>
+                                }
+                                else
+                                {
+                                    <span class="fa fa-star"></span>
+                                }
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>No reviews available for this course.</p>
+    }
+</div>

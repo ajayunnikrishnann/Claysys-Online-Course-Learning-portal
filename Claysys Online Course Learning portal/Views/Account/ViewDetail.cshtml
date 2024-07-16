@@ -1,7 +1,123 @@
-﻿
+﻿@model Claysys_Online_Course_Learning_portal.Models.Course
+
 @{
-    ViewBag.Title = "ViewDetail";
+    ViewBag.Title = "Course Details";
+    string currentUserId = User.Identity.Name;
 }
 
-<h2>ViewDetail</h2>
+<div class="course-detail-container">
+    <h2>@Model.Title</h2>
+    <link rel="stylesheet" type="text/css" href="~/Content/ViewDetail.css" />
+    <div class="video-container">
+        <video src="@Model.SmallVideoPath" controls></video>
+    </div>
+    <div class="course-description">
+        @Model.Description
+    </div>
+    <div class="reference-links">
+        <h4>Reference Links:</h4>
+        <p>@Html.Raw(Model.ReferenceLinks)</p>
+    </div>
 
+    <div class="reviews">
+        <h3>Reviews</h3>
+        @foreach (var review in Model.Reviews)
+        {
+            <div class="review">
+                <p>@review.Comment</p>
+                <div class="rating">
+                    @for (int i = 1; i <= 5; i++)
+                    {
+                        <span class="fa fa-star @(i <= review.ReviewScore ? "checked" : "")"></span>
+                    }
+                </div>
+                <small>by @review.UserId on @review.CreatedAt.ToShortDateString()</small>
+
+                @if (review.UserId == currentUserId)
+                {
+                    <form action="@Url.Action("DeleteReview", "Account")" method="post" style="display:inline;">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="reviewId" value="@review.ReviewId" />
+                        <input type="hidden" name="courseId" value="@Model.CourseId" />
+                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                    </form>
+
+                    <button type="button" class="btn btn-primary btn-sm" onclick="editReview(@review.ReviewId, '@review.Comment', @review.ReviewScore)">Edit</button>
+                }
+            </div>
+        }
+    </div>
+
+    @if (User.Identity.IsAuthenticated)
+    {
+        <div class="add-review">
+            <form action="@Url.Action("AddReview", "Account")" method="post" id="reviewForm">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="ReviewId" id="reviewId" value="0" />
+                <input type="hidden" name="CourseId" value="@Model.CourseId" />
+                <div class="form-group">
+                    <label for="ReviewScore">Rating</label>
+                    <select name="ReviewScore" id="reviewScore" class="form-control">
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="Comment">Comment</label>
+                    <textarea name="Comment" id="reviewComment" class="form-control"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+    }
+</div>
+
+<!-- Edit Review Modal -->
+<div id="editReviewModal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Review</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="@Url.Action("EditReview", "Account")" method="post" id="editReviewForm">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="ReviewId" id="editReviewId" />
+                    <input type="hidden" name="CourseId" value="@Model.CourseId" />
+                    <div class="form-group">
+                        <label for="editReviewScore">Rating</label>
+                        <select name="ReviewScore" id="editReviewScore" class="form-control">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="editReviewComment">Comment</label>
+                        <textarea name="Comment" id="editReviewComment" class="form-control"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Update Review</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function editReview(reviewId, comment, score) {
+            document.getElementById('editReviewId').value = reviewId;
+            document.getElementById('editReviewComment').value = comment;
+            document.getElementById('editReviewScore').value = score;
+            $('#editReviewModal').modal('show');
+        }
+    </script>
+}

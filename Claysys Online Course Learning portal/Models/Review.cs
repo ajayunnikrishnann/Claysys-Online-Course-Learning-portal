@@ -26,6 +26,8 @@ namespace Claysys_Online_Course_Learning_portal.Models
         [StringLength(1000, ErrorMessage = "Comment cannot be longer than 1000 characters.")]
         public string Comment { get; set; }
 
+        public virtual Course Course { get; set; }
+
         public DateTime CreatedAt { get; set; }
     }
 }

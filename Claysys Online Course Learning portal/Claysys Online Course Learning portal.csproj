@@ -146,6 +146,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\AddReviewViewModel.cs" />
     <Compile Include="Models\Admin.cs" />
     <Compile Include="Models\ApplicationDbContext.cs" />
     <Compile Include="Models\Course.cs" />
@@ -174,12 +175,15 @@
     <Content Include="Content\bootstrap.rtl.min.css" />
     <Content Include="Content\Contact.css" />
     <Content Include="Content\CourseManagement.css" />
+    <Content Include="Content\CourseReviews.css" />
+    <Content Include="Content\CourseReviewsAdmin.css" />
     <Content Include="Content\Create.css" />
     <Content Include="Content\Custom.css" />
     <Content Include="Content\Delete.css" />
     <Content Include="Content\Edit.css" />
     <Content Include="Content\Homepage.css" />
     <Content Include="Content\Index.css" />
+    <Content Include="Content\ViewDetail.css" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
@@ -230,6 +234,7 @@
     <Content Include="Views\Admin\EditCourse.cshtml" />
     <Content Include="Views\Admin\DeleteCourse.cshtml" />
     <Content Include="Views\Account\ViewDetail.cshtml" />
+    <Content Include="Views\Admin\ViewCourseReviews.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

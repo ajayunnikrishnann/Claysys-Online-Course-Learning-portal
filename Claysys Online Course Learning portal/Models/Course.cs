@@ -26,12 +26,26 @@ namespace Claysys_Online_Course_Learning_portal.Models
 
         public int UserPurchasedCount { get; set; } // Number of users who purchased the course
 
-        public decimal AverageReviewScore { get; set; }
-
-        // Navigation properties
         public virtual ICollection<Review> Reviews { get; set; } // Course reviews
 
-       
+        // Constructor to initialize Reviews collection
+        public Course()
+        {
+            Reviews = new HashSet<Review>();
+        }
+
+        [NotMapped]
+        public double AverageReviewScore
+        {
+            get
+            {
+                if (Reviews != null && Reviews.Count > 0)
+                {
+                    return Reviews.Average(r => r.ReviewScore);
+                }
+                return 0;
+            }
+        }
 
         // NotMapped properties for file uploads
         [NotMapped]
@@ -39,12 +53,5 @@ namespace Claysys_Online_Course_Learning_portal.Models
 
         [NotMapped]
         public HttpPostedFileBase ImageFile { get; set; } // Uploaded image file
-
-
-        // Constructor to initialize Reviews collection
-        public Course()
-        {
-            Reviews = new HashSet<Review>();
-        }
     }
 }

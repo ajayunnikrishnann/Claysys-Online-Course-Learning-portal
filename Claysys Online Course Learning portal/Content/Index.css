@@ -1,12 +1,14 @@
-﻿.course-container {
+﻿/* Container for the courses */
+.course-container {
     display: flex;
     flex-wrap: wrap;
-    gap: 20px;
+    gap: 30px;
     justify-content: center;
     margin-top: 20px;
     padding-bottom: 40px;
 }
 
+/* Card styling */
 .course-card {
     background-color: white;
     border: 1px solid #ddd;
@@ -14,33 +16,45 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     padding: 20px;
     text-align: center;
-    width: 300px;
+    width: 250px; /* Ensure cards have consistent width */
+    margin: 10px; /* Ensure consistent spacing */
 }
 
+/* Image styling */
 .course-image {
     border-radius: 10px 10px 0 0;
     width: 100%;
     height: auto;
 }
 
-.course-card h3 {
+/* Title styling */
+.course-title {
     font-size: 1.5em;
     margin: 15px 0;
 }
 
+/* Reviews section */
 .course-reviews {
     margin-bottom: 15px;
 }
 
-.fa-star {
-    color: #ddd;
-}
-
-    .fa-star.checked {
-        color: #ffc107;
+    .course-reviews .fa-star {
+        color: #ddd;
     }
 
-.btn-primary {
+        .course-reviews .fa-star.checked {
+            color: #ffc107;
+        }
+
+.review-count {
+    display: block;
+    margin-top: 10px;
+    font-size: 0.9em;
+    color: #666;
+}
+
+/* Button styling */
+.btn.custom-btn {
     background-color: #007bff;
     border: none;
     border-radius: 5px;
@@ -48,3 +62,17 @@
     padding: 10px 20px;
     text-decoration: none;
 }
+
+/* Star rating styling */
+.rating {
+    display: flex;
+    align-items: center;
+}
+
+    .rating .fa-star {
+        color: #f5c518; /* Gold color for stars */
+    }
+
+        .rating .fa-star.checked {
+            color: #ffcc00; /* Darker gold color for checked stars */
+        }

@@ -249,12 +249,18 @@
                 return RedirectToAction("CourseManagement"); // Redirect to course management page or another appropriate action
             }
 
+
         public ActionResult ViewCourseReviews(int courseId)
         {
-            ViewBag.CourseTitle = _courseDataAccess.GetCourseById(courseId).Title;
-            var reviews = _courseDataAccess.GetReviewsByCourseId(courseId);
-            return View(reviews);
+            var course = _courseDataAccess.GetCourseWithReviewsById(courseId);  // Fetch the course data along with reviews
+            if (course == null)
+            {
+                return HttpNotFound();
+            }
+
+            return View(course);
         }
 
+
     }
-    }
+}

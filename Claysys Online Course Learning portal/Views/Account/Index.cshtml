@@ -23,7 +23,7 @@
             slideIndex++;
             if (slideIndex > slides.length) { slideIndex = 1 }
             slides[slideIndex - 1].style.display = "block";
-            setTimeout(showSlides, 2000); // Change image every 1.5 seconds
+            setTimeout(showSlides, 2000); // Change image every 2 seconds
         }
     </script>
 }
@@ -43,26 +43,24 @@
     </div>
 </div>
 
-<div class="course-container">
-    @foreach (var course in Model)
-    {
-        <div class="course-card">
-            <img src="data:image/png;base64,@course.ImageBase64" alt="@course.Title" class="course-image" />
-            <h3>@course.Title</h3>
-            <div class="course-reviews">
-                @for (int i = 0; i < 5; i++)
-                {
-                    if (i < course.AverageReviewScore)
-                    {
-                        <span class="fa fa-star checked"></span>
-                    }
-                    else
-                    {
-                        <span class="fa fa-star"></span>
-                    }
-                }
+<div class="container mt-4">
+    <div class="row">
+        @foreach (var course in Model)
+        {
+            <div class="col-md-3 mb-4">
+                <div class="course-card custom-card">
+                    <img src="@($"data:image/jpeg;base64,{course.ImageBase64}")" class="course-image" alt="@course.Title">
+                    <h5 class="course-title">@course.Title</h5>
+                    <div class="course-reviews">
+                        @for (int i = 1; i <= 5; i++)
+                        {
+                            <span class="fa fa-star @(i <= course.AverageReviewScore ? "checked" : "")"></span>
+                        }
+                        <span class="review-count">(@course.Reviews.Count) Reviews</span>
+                    </div>
+                    <a href="@Url.Action("ViewDetail", "Account", new { id = course.CourseId })" class="btn custom-btn">View Detail</a>
+                </div>
             </div>
-            <a href="@Url.Action("ViewDetail", "Account", new { id = course.CourseId })" class="btn btn-primary">View Detail</a>
-        </div>
-    }
+        }
+    </div>
 </div>
