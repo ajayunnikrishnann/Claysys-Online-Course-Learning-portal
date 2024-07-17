@@ -206,6 +206,11 @@
     margin-top: 90px;
 }
 
+    .signup-form .error-message {
+        color: red;
+        font-size: 16px; /* Adjust as needed */
+    }
+
     /* Custom styles for input field labels */
    .inputbox label {
         font-size: 18px; /* Increase the font size as needed */
@@ -333,7 +338,7 @@ input[type="submit"] {
 /* Error Styles */
 .error {
     color: red;
-    font-size: 16px;
+    font-size: 0.90em;
     font-weight:bold;
 }
 
@@ -481,10 +486,6 @@ footer {
     border-color: green;
 }
 
-.error-message {
-    color: red;
-    font-size: 0.14em;
-}
 
 
 /* login form */
@@ -572,7 +573,7 @@ footer {
 
     .login-form .error {
         color: rgb(238, 7, 7);
-        font-size: 16px;
+        font-size: 0.90em;
     }
 
 @media (max-width: 768px) {

@@ -7,6 +7,7 @@ using BCrypt.Net;
 using System.Web;
 using System;
 using System.Web.Security;
+using System.Net;
 
 
 namespace Claysys_Online_Course_Learning_portal.Controllers
@@ -87,14 +88,19 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
         [HttpGet]
         public ActionResult Index()
         {
+            // Check if user is logged in
             if (Session["Username"] != null)
             {
                 ViewBag.Username = Session["Username"].ToString();
                 ViewBag.IsLoggedIn = true;
+
+                var userId = (int)Session["UserID"];
+                
             }
             else
             {
                 ViewBag.IsLoggedIn = false;
+               
             }
 
             var courses = courseDataAccess.GetAllCourses();
@@ -105,8 +111,9 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
                 Debug.WriteLine($"Course: {course.Title}, AverageReviewScore: {course.AverageReviewScore}, ReviewCount: {course.Reviews.Count}");
             }
 
-            return View(courses);
+            return View(courses); // Ensure there is a corresponding Index.cshtml view in Views/Account
         }
+
 
 
 
@@ -311,8 +318,49 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
             return View(model);
         }
 
-       
+
+        [HttpPost]
+        public JsonResult Enroll(int courseId)
+        {
+            try
+            {
+                var userId = (int)Session["UserID"];
+                if (!courseDataAccess.IsUserEnrolledInCourse(userId, courseId))
+                {
+                    courseDataAccess.AddEnrollment(userId, courseId);
+
+                    var course = courseDataAccess.GetCourseById(courseId);
+                    if (course != null)
+                    {
+                        // Increment the UserPurchasedCount
+                        course.UserPurchasedCount += 1;
+                        courseDataAccess.UpdateCourse(course);
+
+                        // Return success response
+                        return Json(new { success = true });
+                    }
+                }
+                else
+                {
+                    // Return error response if user is already enrolled
+                    return Json(new { success = false, message = "You are already enrolled in this course." });
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log the exception and return error response
+                Debug.WriteLine($"An error occurred: {ex.Message}");
+                Debug.WriteLine(ex.StackTrace);
+                return Json(new { success = false, message = "An error occurred during enrollment." });
+            }
+
+            // Return error response if course is not found or other conditions
+            return Json(new { success = false, message = "An error occurred during enrollment." });
+        }
+
+
 
     }
 }
+
 

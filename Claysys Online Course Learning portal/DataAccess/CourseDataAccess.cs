@@ -379,5 +379,36 @@ namespace Claysys_Online_Course_Learning_portal.DataAccess
             }
         }
 
+
+        public bool IsUserEnrolledInCourse(int userId, int courseId)
+        {
+            string query = "SELECT COUNT(*) FROM Enrollments WHERE UserId = @UserId AND CourseId = @CourseId";
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            using (SqlCommand command = new SqlCommand(query, connection))
+            {
+                command.Parameters.AddWithValue("@UserId", userId);
+                command.Parameters.AddWithValue("@CourseId", courseId);
+                connection.Open();
+                int count = (int)command.ExecuteScalar();
+                return count > 0;
+            }
+        }
+
+        // Add a new enrollment record
+        public void AddEnrollment(int userId, int courseId)
+        {
+            string query = "INSERT INTO Enrollments (UserId, CourseId) VALUES (@UserId, @CourseId)";
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            using (SqlCommand command = new SqlCommand(query, connection))
+            {
+                command.Parameters.AddWithValue("@UserId", userId);
+                command.Parameters.AddWithValue("@CourseId", courseId);
+                connection.Open();
+                command.ExecuteNonQuery();
+            }
+        }
+
+
+
     }
 }

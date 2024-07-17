@@ -25,6 +25,30 @@
             slides[slideIndex - 1].style.display = "block";
             setTimeout(showSlides, 2000); // Change image every 2 seconds
         }
+
+        $(document).ready(function () {
+            $('.enrollButton').click(function () {
+                var courseId = $(this).data('course-id');
+                $('#confirmEnrollButton').data('course-id', courseId); // Store courseId in the modal button
+                $('#enrollModal').modal('show'); // Show the modal
+            });
+
+           $('#confirmEnrollButton').click(function () {
+    var courseId = $(this).data('course-id');
+    $.ajax({
+        url: '@Url.Action("Enroll", "Account")',
+        type: 'POST',
+        data: { courseId: courseId },
+        success: function () {
+            window.location.href = '@Url.Action("ViewDetail", "Account")?id=' + courseId;
+        },
+        error: function () {
+            console.log('An error occurred during the request.');
+        }
+    });
+});
+
+        });
     </script>
 }
 
@@ -44,6 +68,7 @@
 </div>
 
 <div class="container mt-4">
+    <h3>Courses</h3>
     <div class="row">
         @foreach (var course in Model)
         {
@@ -58,9 +83,29 @@
                         }
                         <span class="review-count">(@course.Reviews.Count) Reviews</span>
                     </div>
-                    <a href="@Url.Action("ViewDetail", "Account", new { id = course.CourseId })" class="btn custom-btn">View Detail</a>
+                    <a href="javascript:void(0);" class="btn custom-btn enrollButton" data-course-id="@course.CourseId">
+                        @(ViewBag.EnrolledCourses != null && ViewBag.EnrolledCourses.Contains(course.CourseId) ? "Already Enrolled" : "View Detail")
+                    </a>
                 </div>
             </div>
         }
+    </div>
+</div>
+
+<div class="modal fade" id="enrollModal" tabindex="-1" aria-labelledby="enrollModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="enrollModalLabel">Confirm Enrollment</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to enroll in this course?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="confirmEnrollButton">Enroll Now</button>
+            </div>
+        </div>
     </div>
 </div>

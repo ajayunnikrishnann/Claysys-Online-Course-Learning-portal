@@ -249,7 +249,7 @@
                 return RedirectToAction("CourseManagement"); // Redirect to course management page or another appropriate action
             }
 
-
+        [HttpGet]
         public ActionResult ViewCourseReviews(int courseId)
         {
             var course = _courseDataAccess.GetCourseWithReviewsById(courseId);  // Fetch the course data along with reviews
@@ -260,7 +260,6 @@
 
             return View(course);
         }
-
 
     }
 }
