@@ -29,6 +29,8 @@
                 </div>
                 <div class="offcanvas-body">
                     <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+                        
+
                         <li class="nav-item">
                             <a class="nav-link @(ViewContext.RouteData.Values["action"].ToString() == "Index" ? "active" : "")" aria-current="page" href="@Url.Action("Index", "Account")">Home</a>
                         </li>
@@ -38,13 +40,19 @@
                         <li class="nav-item">
                             <a class="nav-link @(ViewContext.RouteData.Values["action"].ToString() == "Contact" ? "active" : "")" href="@Url.Action("Contact", "Account")">Contact us</a>
                         </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="@Url.Action("TutorIndex", "Tutor")">
+                                <img src="~/Content/Images/tutor-logo.png" alt="Tutor Mode" style="height: 30px; width: auto;">
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </div>
             @if (Session["Username"] != null)
             {
                 <div class="d-flex align-items-center">
-                    <span class="me-2">Welcome, @Session["Username"]</span>
+                    <span class="me-2" style="font-weight:bold"> @Session["Username"]</span>
                     <a href="@Url.Action("Logout", "Account")" class="signup-button">Logout</a>
                 </div>
             }
@@ -147,3 +155,5 @@
     @RenderSection("scripts", required: false)
 </body>
 </html>
+
+

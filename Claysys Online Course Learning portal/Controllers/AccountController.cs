@@ -359,6 +359,18 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
         }
 
 
+        public ActionResult TutorIndex()
+        {
+            var courses = courseDataAccess.GetAllCourses();
+
+            foreach (var course in courses)
+            {
+                course.Reviews = courseDataAccess.GetReviewsByCourseId(course.CourseId);
+                Debug.WriteLine($"Course: {course.Title}, AverageReviewScore: {course.AverageReviewScore}, ReviewCount: {course.Reviews.Count}");
+            }
+
+            return View(courses); // Ensure there is a corresponding TutorIndex.cshtml view in Views/Account
+        }
 
     }
 }

@@ -1,0 +1,115 @@
+﻿@model IEnumerable<Claysys_Online_Course_Learning_portal.Models.Course>
+
+@{
+    ViewBag.Title = "Tutor Home";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section styles {
+    <link href="~/Content/Index.css" rel="stylesheet" type="text/css" />
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" />
+
+}
+
+@section scripts {
+    <script>
+        var slideIndex = 0;
+        showSlides();
+
+        function showSlides() {
+            var i;
+            var slides = document.getElementsByClassName("mySlides");
+            for (i = 0; i < slides.length; i++) {
+                slides[i].style.display = "none";
+            }
+            slideIndex++;
+            if (slideIndex > slides.length) { slideIndex = 1 }
+            slides[slideIndex - 1].style.display = "block";
+            setTimeout(showSlides, 2000); // Change image every 2 seconds
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            var enrollButtons = document.querySelectorAll(".enrollButton");
+            enrollButtons.forEach(function (button) {
+                button.addEventListener("click", function () {
+                    var courseId = this.getAttribute("data-course-id");
+                    var confirmEnrollButton = document.getElementById("confirmEnrollButton");
+                    confirmEnrollButton.setAttribute("data-course-id", courseId);
+                    $('#enrollModal').modal('show');
+                });
+            });
+
+            document.getElementById("confirmEnrollButton").addEventListener("click", function () {
+                var courseId = this.getAttribute("data-course-id");
+                var url = '@Url.Action("ViewDetail", "Account")';
+                window.location.href = url + '/' + courseId;
+            });
+        });
+    </script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+}
+
+
+
+<div class="slideshow-container">
+    <div class="mySlides fade">
+        <img src="@Url.Content("~/Content/images/slider5.jpeg")" style="width:100%">
+    </div>
+    <div class="mySlides fade">
+        <img src="@Url.Content("~/Content/images/slider6.jpg")" style="width:100%">
+    </div>
+    <div class="mySlides fade">
+        <img src="@Url.Content("~/Content/images/slider7.jpg")" style="width:100%">
+    </div>
+    <div class="mySlides fade">
+        <img src="@Url.Content("~/Content/images/slider8.jpg")" style="width:100%">
+    </div>
+</div>
+
+<a href="@Url.Action("CreateCourse", "Tutor")" class="btn btn-primary" style="margin-left:130px; margin-top:10px">Create New Course</a>
+
+<div class="container mt-4">
+    <h3>Courses</h3>
+    <div class="row">
+        @foreach (var course in Model)
+        {
+            <div class="col-md-3 mb-4">
+                <div class="course-card custom-card">
+                    <img src="@($"data:image/jpeg;base64,{course.ImageBase64}")" class="course-image" alt="@course.Title">
+                    <h5 class="course-title">@course.Title</h5>
+                    <div class="course-reviews">
+                        @for (int i = 1; i <= 5; i++)
+                        {
+                            <span class="fa fa-star @(i <= course.AverageReviewScore ? "checked" : "")"></span>
+                        }
+                        <span class="review-count">(@course.Reviews.Count) Reviews</span>
+                    </div>
+                    <a href="javascript:void(0);" class="btn custom-btn enrollButton" data-course-id="@course.CourseId">
+                        @(ViewBag.EnrolledCourses != null && ViewBag.EnrolledCourses.Contains(course.CourseId) ? "Already Enrolled" : "View Detail")
+                    </a>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<div class="modal fade" id="enrollModal" tabindex="-1" aria-labelledby="enrollModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="enrollModalLabel">Confirm Enrollment</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to enroll in this course?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="confirmEnrollButton">Enroll Now</button>
+            </div>
+        </div>
+    </div>
+</div>
+
