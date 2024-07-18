@@ -186,6 +186,7 @@
     <Content Include="Content\Homepage.css" />
     <Content Include="Content\Index.css" />
     <Content Include="Content\TutorCreateCourse.css" />
+    <Content Include="Content\TutorIndex.css" />
     <Content Include="Content\ViewDetail.css" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
@@ -206,6 +207,7 @@
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
+    <Content Include="Scripts\LoginValidation.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Scripts\validation.js" />
     <Content Include="Web.config" />
@@ -240,6 +242,8 @@
     <Content Include="Views\Admin\ViewCourseReviews.cshtml" />
     <Content Include="Views\Tutor\TutorIndex.cshtml" />
     <Content Include="Views\Tutor\CreateCourse.cshtml" />
+    <Content Include="Views\Tutor\SignupTutor.cshtml" />
+    <Content Include="Views\Tutor\LoginTutor.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

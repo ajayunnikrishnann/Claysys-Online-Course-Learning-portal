@@ -6,10 +6,15 @@
 }
 
 @section styles {
-    <link href="~/Content/Index.css" rel="stylesheet" type="text/css" />
+    
+    <link href="~/Content/Custom.css" rel="stylesheet" type="text/css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
 }
 
 @section scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script>
         var slideIndex = 0;
         showSlides();
@@ -29,25 +34,49 @@
         $(document).ready(function () {
             $('.enrollButton').click(function () {
                 var courseId = $(this).data('course-id');
+                var isUserLoggedIn = @(Session["UserID"] != null ? "true" : "false");
+                var isAlreadyEnrolled = $(this).text() === "Already Enrolled";
+
+                console.log('Enroll button clicked');
+                if (!isUserLoggedIn) {
+                    toastr.warning('You need to log in to enroll in a course.');
+                    return;
+                }
+
+                if (isAlreadyEnrolled) {
+                    toastr.info('You are already enrolled in this course.');
+                    return;
+                }
+
                 $('#confirmEnrollButton').data('course-id', courseId); // Store courseId in the modal button
                 $('#enrollModal').modal('show'); // Show the modal
             });
 
-           $('#confirmEnrollButton').click(function () {
-    var courseId = $(this).data('course-id');
-    $.ajax({
-        url: '@Url.Action("Enroll", "Account")',
-        type: 'POST',
-        data: { courseId: courseId },
-        success: function () {
-            window.location.href = '@Url.Action("ViewDetail", "Account")?id=' + courseId;
-        },
-        error: function () {
-            console.log('An error occurred during the request.');
-        }
-    });
-});
-
+            $('#confirmEnrollButton').click(function () {
+                var courseId = $(this).data('course-id');
+                console.log('Confirm enroll button clicked with course ID:', courseId);
+                $.ajax({
+                    url: '@Url.Action("Enroll", "Account")',
+                    type: 'POST',
+                    data: { courseId: courseId },
+                    success: function (response) {
+                        console.log('AJAX call successful', response);
+                        if (response.success) {
+                            window.location.href = '@Url.Action("ViewDetail", "Account")?id=' + courseId;
+                        } else {
+                            if (response.redirectUrl) {
+                                window.location.href = response.redirectUrl;
+                            } else {
+                                toastr.error(response.message);
+                            }
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('AJAX call failed', xhr, status, error);
+                        toastr.error('An error occurred during the request.');
+                    }
+                });
+            });
         });
     </script>
 }
@@ -73,7 +102,7 @@
         @foreach (var course in Model)
         {
             <div class="col-md-3 mb-4">
-                <div class="course-card custom-card">
+                <div class="course-card ">
                     <img src="@($"data:image/jpeg;base64,{course.ImageBase64}")" class="course-image" alt="@course.Title">
                     <h5 class="course-title">@course.Title</h5>
                     <div class="course-reviews">
@@ -84,7 +113,7 @@
                         <span class="review-count">(@course.Reviews.Count) Reviews</span>
                     </div>
                     <a href="javascript:void(0);" class="btn custom-btn enrollButton" data-course-id="@course.CourseId">
-                        @(ViewBag.EnrolledCourses != null && ViewBag.EnrolledCourses.Contains(course.CourseId) ? "Already Enrolled" : "View Detail")
+                        @(ViewBag.EnrolledCourses != null && ViewBag.EnrolledCourses.Contains(course.CourseId) ? "Already Enrolled" : "Enroll")
                     </a>
                 </div>
             </div>

@@ -64,6 +64,18 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
         {
             var user = _userDataAccess.GetUserByUsername(username);
 
+            if (user == null)
+            {
+                ModelState.AddModelError("UsernameNotFound", "Username not found.");
+                return View();
+            }
+
+            if (user != null && !VerifyPassword(password, user.Password))
+            {
+                ModelState.AddModelError("PasswordIncorrect", "Incorrect password.");
+                return View();
+            }
+
             if (user != null && VerifyPassword(password, user.Password))
             {
                 FormsAuthentication.SetAuthCookie(user.Username, false);
@@ -322,6 +334,12 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
         [HttpPost]
         public JsonResult Enroll(int courseId)
         {
+
+            if (Session["UserID"] == null)
+            {
+                return Json(new { success = false, redirectUrl = Url.Action("Login", "Account"), message = "You need to log in first." });
+            }
+
             try
             {
                 var userId = (int)Session["UserID"];
@@ -371,6 +389,8 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
 
             return View(courses); // Ensure there is a corresponding TutorIndex.cshtml view in Views/Account
         }
+
+       
 
     }
 }

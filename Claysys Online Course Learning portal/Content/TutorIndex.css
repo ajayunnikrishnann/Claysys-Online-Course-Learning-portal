@@ -1,0 +1,357 @@
+﻿
+
+
+/* Signup page */
+.background-section {
+    background: url('../Content/images/banner10.jpg') no-repeat center center fixed;
+    background-size: cover;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.signup-form {
+    background: rgba(255, 255, 255, 0.7);
+    padding: 12px;
+    border-radius: 10px;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    width: 100%;
+    text-align: center;
+    font-size: 18px;
+    max-height: 76vh;
+    overflow-y: auto;
+    margin-top: 90px;
+}
+
+
+.signup-form .error-message {
+    color: red;
+    font-size: 16px; /* Adjust as needed */
+}
+
+/* Custom styles for input field labels */
+.inputbox label {
+    font-size: 18px; /* Increase the font size as needed */
+    font-weight: bold; /* Make the font bold */
+}
+
+
+.signup-form::-webkit-scrollbar {
+    width: 6px;
+}
+
+.signup-form::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.signup-form::-webkit-scrollbar-thumb {
+    background-color: #07db71;
+    border-radius: 6px;
+}
+
+
+.content {
+    overflow-x: hidden;
+}
+
+.signup-form h2 {
+    margin-bottom: 2px;
+    font-size: 18px;
+}
+
+/* Input Styles */
+.inputbox {
+    margin-bottom: 5px;
+    text-align: left;
+}
+
+    .inputbox label {
+        display: block;
+        margin-bottom: 3px;
+        font-size: 16px;
+        font-weight: bold;
+        width: 100%
+    }
+
+
+    .inputbox input,
+    .inputbox select {
+        width: calc(100% - 18px);
+        padding: 8px;
+        margin: 0 auto;
+        display: block;
+        border: 1px solid black;
+        border-radius: 4px;
+        font-size: 12px;
+        background-color: transparent;
+        box-sizing: border-box;
+    }
+
+        .inputbox input:focus, .inputbox select:focus {
+            background-color: rgb(184, 221, 204);
+            outline: none;
+        }
+
+.input-row {
+    display: block;
+    justify-content: space-between;
+}
+
+    .input-row .inputbox {
+        width: 100%;
+        margin-bottom: 10px
+    }
+
+input[type="submit"] {
+    background-color: #424552;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    width: 100%;
+    font-size: 14px;
+    margin-top: 10px;
+}
+
+    input[type="submit"]:hover {
+        background-color: #5aa9bd;
+    }
+
+.inputbox input::placeholder {
+    color: black;
+}
+
+.signupcolor {
+    color: black;
+}
+
+.radio-group {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 12px;
+}
+
+    .radio-group label {
+        display: flex;
+        align-items: center;
+        margin-right: 100px;
+        font-size: 12px;
+    }
+
+    .radio-group input {
+        margin: 0 1px 0 0;
+    }
+
+.signin-button {
+    color: white;
+    padding: 8px 16px;
+    cursor: pointer;
+    width: 100%;
+    font-size: 14px;
+    margin-top: 10px;
+}
+/* Error Styles */
+.error {
+    color: red;
+    font-size: 0.90em;
+    font-weight: bold;
+}
+
+.menu-toggle {
+    display: none;
+    cursor: pointer;
+    color: white;
+    font-size: 18px;
+    margin-left: auto;
+}
+
+.star {
+    color: red;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .signup-form {
+        padding: 15px;
+    }
+
+        .signup-form h2 {
+            font-size: 16px;
+        }
+
+    .inputbox label,
+    .inputbox input,
+    .inputbox select {
+        font-size: 14px;
+    }
+
+    .input-row .inputbox {
+        width: 100%;
+    }
+
+    .header nav ul {
+        display: none;
+        flex-direction: column;
+    }
+
+        .header nav ul.show {
+            display: flex;
+        }
+
+    .header .menu-toggle {
+        display: block;
+    }
+}
+
+@media (max-width: 480px) {
+    .signup-form {
+        padding: 10px;
+    }
+
+        .signup-form h2 {
+            font-size: 14px;
+        }
+
+    .inputbox label,
+    .inputbox input,
+    .inputbox select {
+        font-size: 12px;
+    }
+
+    input[type="submit"] {
+        font-size: 12px;
+        padding: 6px 12px;
+    }
+}
+
+@media (min-width: 769px) {
+    .header .menu-toggle {
+        display: none;
+    }
+}
+
+
+
+
+/* validation*/
+.input-error {
+    border-color: red;
+}
+
+.input-success {
+    border-color: green;
+}
+
+background: url('../Content/images/banner10.jpg') no-repeat center center fixed;
+/* login form */
+.login-form {
+    background: rgba(255, 255, 255, 0.7);
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px solid #ccc; /* Added border */
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    width: 100%;
+    text-align: center;
+    font-size: 14px;
+    max-height: 76vh;
+    overflow-y: auto;
+    margin-top: 90px;
+}
+
+    .login-form::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .login-form::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0.1);
+    }
+
+    .login-form::-webkit-scrollbar-thumb {
+        background-color: #07db71;
+        border-radius: 6px;
+    }
+
+    .login-form h2 {
+        margin-bottom: 20px; /* Adjusted spacing */
+        font-size: 24px; /* Adjusted font size */
+    }
+
+    .login-form .inputbox {
+        margin-bottom: 20px; /* Adjusted spacing */
+        text-align: left;
+        font-weight: bold;
+    }
+
+        .login-form .inputbox label {
+            display: block;
+            margin-bottom: 5px; /* Adjusted spacing */
+            font-size: 14px; /* Adjusted font size */
+            width: 100%;
+        }
+
+        .login-form .inputbox input {
+            width: calc(100% - 18px);
+            padding: 10px; /* Adjusted padding */
+            margin: 0 auto;
+            display: block;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px; /* Adjusted font size */
+            background-color: transparent;
+            box-sizing: border-box;
+        }
+
+            .login-form .inputbox input:focus {
+                background-color: rgb(184, 221, 204);
+                outline: none;
+            }
+
+
+    .login-form input[type="submit"] {
+        background-color: #424552;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        padding: 10px 16px; /* Adjusted padding */
+        cursor: pointer;
+        transition: background-color 0.3s;
+        width: 100%;
+        font-size: 16px; /* Adjusted font size */
+        margin-top: 20px; /* Adjusted spacing */
+    }
+
+        .login-form input[type="submit"]:hover {
+            background-color: #5aa9bd;
+        }
+
+    .login-form .error {
+        color: rgb(238, 7, 7);
+        font-size: 0.90em;
+    }
+
+@media (max-width: 768px) {
+    .login-form {
+        padding: 15px;
+    }
+
+        .login-form h2 {
+            font-size: 20px; /* Adjusted font size */
+        }
+
+        .login-form .inputbox label,
+        .login-form .inputbox input {
+            font-size: 14px;
+        }
+
+        .login-form input[type="submit"] {
+            font-size: 14px; /* Adjusted font size */
+            padding: 8px 12px; /* Adjusted padding */
+        }
+}

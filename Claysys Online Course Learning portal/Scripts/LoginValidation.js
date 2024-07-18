@@ -1,33 +1,14 @@
-﻿document.addEventListener('DOMContentLoaded', function () {
-    const form = document.getElementById('signup-form');
-   
+document.addEventListener('DOMContentLoaded', function () {
+    const form = document.getElementById('login-form');
+
     const fields = form.querySelectorAll('input, textarea, select');
     const validations = {
-        'FirstName': {
-            'regex': /^[a-zA-Z]{2,50}$/,
-            'message': 'First name should be between 3 and 50 letters.'
-        },
-        'LastName': {
-            'regex': /^[a-zA-Z]{2,50}$/,
-            'message': 'Last name should be between 2 and 50 letters.'
-        },
-        'Email': {
-            'regex': /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-            'message': 'Enter a valid email address.',
-            'ajax': '/Account/CheckEmail'
-        },
-        'Phone': {
-            'regex': /^[0-9]{10}$/,
-            'message': 'Phone number should be exactly 10 digits.'
-        },
+       
         'Password': {
             'regex': /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
             'message': 'Password must be minimum eight characters, at least one letter and one number.'
         },
-        'ConfirmPassword': {
-            'match': 'Password',
-            'message': 'Passwords do not match.'
-        },
+        
         'Username': {
             'regex': /^[a-zA-Z0-9]{3,50}$/,
             'message': 'Username should be between 3 and 50 alphanumeric characters.',

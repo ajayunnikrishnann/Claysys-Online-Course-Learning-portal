@@ -25,6 +25,13 @@ namespace Claysys_Online_Course_Learning_portal
            url: "Admin/{action}/{id}",
            defaults: new { controller = "Admin", action = "UserManagement", id = UrlParameter.Optional }
        );
+
+            // Add route for TutorController
+            routes.MapRoute(
+           name: "Tutor",
+           url: "Tutor/{action}/{id}",
+           defaults: new { controller = "Tutor", action = "TutorIndex", id = UrlParameter.Optional }
+       );
         }
     }
 }

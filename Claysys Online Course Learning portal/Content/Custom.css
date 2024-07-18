@@ -22,11 +22,11 @@
 }
 
 .signup-button {
-    background-color: #009970;
+    background-color: rgba(191, 94, 181, 0.7);
     color: #fff;
     font-size: 14px;
-    padding: 8px 20px;
-    border-radius: 50px;
+    padding: 4px 10px;
+    border-radius: 10px;
     text-decoration: none;
     transition: 0.3s background-color;
 }
@@ -49,6 +49,7 @@
     color: #666777;
     font-weight: 500;
     position: relative;
+    margin-right: 20px;
 }
 
 .nav-link:hover,.nav-link.active {
@@ -193,7 +194,7 @@
     padding: 20px;
 }
 .signup-form {
-    background: rgba(255, 255, 255, 0.7);
+    background: rgba(202, 216, 217, 0.7);
     padding: 12px;
     border-radius: 10px;
     box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
@@ -285,7 +286,7 @@
     }
 
 input[type="submit"] {
-    background-color: #08e2d7;
+    background-color: #445e33;
     color: white;
     border: none;
     border-radius: 4px;
@@ -490,7 +491,7 @@ footer {
 
 /* login form */
 .login-form {
-    background: rgba(255, 255, 255, 0.5);
+    background: rgba(255, 255, 255, 0.7);
     padding: 20px;
     border-radius: 10px;
     border: 1px solid #ccc; /* Added border */
@@ -555,7 +556,7 @@ footer {
 
 
     .login-form input[type="submit"] {
-        background-color: #08e2d7;
+        background-color: #445e33;
         color: white;
         border: none;
         border-radius: 4px;
@@ -595,3 +596,86 @@ footer {
             padding: 8px 12px; /* Adjusted padding */
         }
 }
+
+
+#toast-container > .toast {
+    opacity: 0.98 !important;
+}
+
+
+/* Container for the courses */
+.course-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    justify-content: center;
+    margin-top: 20px;
+    padding-bottom: 40px;
+}
+
+/* Card styling */
+.course-card {
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    text-align: center;
+    width: 250px; /* Ensure cards have consistent width */
+    margin: 10px; /* Ensure consistent spacing */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Ensure consistent spacing */
+    height: 100%; /* Ensure cards stretch to the same height */
+}
+
+/* Image styling */
+.course-image {
+    border-radius: 10px 10px 0 0;
+    width: 100%;
+    height: auto;
+}
+
+/* Title styling */
+.course-title {
+    font-size: 1.5em;
+    margin: 15px 0;
+    flex-grow: 1; /* Ensure title section takes up available space */
+}
+
+/* Reviews section */
+.course-reviews {
+    margin-bottom: 15px;
+}
+
+    .course-reviews .fa-star {
+        color: #bfbfb8;
+    }
+
+        .course-reviews .fa-star.checked {
+            color: #FFD700;
+        }
+
+.review-count {
+    display: block;
+    margin-top: 5px;
+    font-size: 0.9em;
+    color: #777;
+}
+
+/* Enroll button */
+.enrollButton {
+    background-color: rgba(191, 94, 181);
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-size: 1em;
+    transition: background-color 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+}
+
+    .enrollButton:hover {
+        background-color: #007d5e;
+    }
