@@ -46,10 +46,10 @@ namespace Claysys_Online_Course_Learning_portal.DataAccess
 
             using (SqlConnection con = new SqlConnection(_connectionString))
             {
-                using (SqlCommand cmd = new SqlCommand("sp_GetAllCourses", con))
+                string query = "SELECT * FROM Courses WHERE IsDeleted = 0";
+                using (SqlCommand cmd = new SqlCommand(query, con))
                 {
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    // Set the command timeout to 5 minutes (300 seconds)
+                    cmd.CommandType = CommandType.Text;
                     cmd.CommandTimeout = 300;
                     con.Open();
 
@@ -65,8 +65,8 @@ namespace Claysys_Online_Course_Learning_portal.DataAccess
                                 SmallVideoPath = reader["SmallVideoPath"].ToString(),
                                 ImageBase64 = reader["ImageBase64"].ToString(),
                                 ReferenceLinks = reader["ReferenceLinks"].ToString(),
-                                UserPurchasedCount = Convert.ToInt32(reader["UserPurchasedCount"]),
-                               
+                                UserPurchasedCount = reader["UserPurchasedCount"] != DBNull.Value ? Convert.ToInt32(reader["UserPurchasedCount"]) : 0,
+                                PurchaseLimit = reader["PurchaseLimit"] != DBNull.Value ? Convert.ToInt32(reader["PurchaseLimit"]) : 0
                             };
 
                             courses.Add(course);
@@ -84,7 +84,7 @@ namespace Claysys_Online_Course_Learning_portal.DataAccess
             Course course = null;
             using (SqlConnection con = new SqlConnection(_connectionString))
             {
-                string query = "SELECT * FROM Courses WHERE CourseId = @CourseId";
+                string query = "SELECT * FROM Courses WHERE CourseId = @CourseId AND IsDeleted = 0";
                 using (SqlCommand cmd = new SqlCommand(query, con))
                 {
                     cmd.Parameters.AddWithValue("@CourseId", courseId);
@@ -101,7 +101,8 @@ namespace Claysys_Online_Course_Learning_portal.DataAccess
                                 SmallVideoPath = reader["SmallVideoPath"].ToString(),
                                 ImageBase64 = reader["ImageBase64"].ToString(),
                                 ReferenceLinks = reader["ReferenceLinks"].ToString(),
-                                UserPurchasedCount = Convert.ToInt32(reader["UserPurchasedCount"])
+                                UserPurchasedCount = Convert.ToInt32(reader["UserPurchasedCount"]),
+                                PurchaseLimit = reader["PurchaseLimit"] != DBNull.Value ? (int)reader["PurchaseLimit"] : 0,
                             };
                         }
                     }
@@ -110,11 +111,12 @@ namespace Claysys_Online_Course_Learning_portal.DataAccess
             return course;
         }
 
+
         public void UpdateCourse(Course course)
         {
             using (SqlConnection con = new SqlConnection(_connectionString))
             {
-                string query = "UPDATE Courses SET Title = @Title, Description = @Description, ReferenceLinks = @ReferenceLinks, UserPurchasedCount = @UserPurchasedCount";
+                string query = "UPDATE Courses SET Title = @Title, Description = @Description, ReferenceLinks = @ReferenceLinks, UserPurchasedCount = @UserPurchasedCount, PurchaseLimit = @PurchaseLimit";
 
                 if (!string.IsNullOrEmpty(course.SmallVideoPath))
                 {
@@ -135,7 +137,7 @@ namespace Claysys_Online_Course_Learning_portal.DataAccess
                     cmd.Parameters.AddWithValue("@ReferenceLinks", course.ReferenceLinks);
                     cmd.Parameters.AddWithValue("@UserPurchasedCount", course.UserPurchasedCount);
                     cmd.Parameters.AddWithValue("@CourseId", course.CourseId);
-
+                    cmd.Parameters.AddWithValue("@PurchaseLimit", course.PurchaseLimit);
                     if (!string.IsNullOrEmpty(course.SmallVideoPath))
                     {
                         cmd.Parameters.AddWithValue("@SmallVideoPath", course.SmallVideoPath);
@@ -145,6 +147,8 @@ namespace Claysys_Online_Course_Learning_portal.DataAccess
                     {
                         cmd.Parameters.AddWithValue("@ImageBase64", course.ImageBase64);
                     }
+
+                    cmd.CommandTimeout = 300;
 
                     con.Open();
                     cmd.ExecuteNonQuery();
@@ -157,15 +161,16 @@ namespace Claysys_Online_Course_Learning_portal.DataAccess
         {
             using (SqlConnection con = new SqlConnection(_connectionString))
             {
-                string query = "DELETE FROM Courses WHERE CourseId = @CourseId";
-                using (SqlCommand cmd = new SqlCommand(query, con))
+                using (SqlCommand cmd = new SqlCommand("SoftDeleteCourse", con))
                 {
+                    cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@CourseId", courseId);
                     con.Open();
                     cmd.ExecuteNonQuery();
                 }
             }
         }
+
 
 
         public void AddReview(Review review)
@@ -276,6 +281,7 @@ namespace Claysys_Online_Course_Learning_portal.DataAccess
                                 ReferenceLinks = reader["ReferenceLinks"].ToString(),
                                 UserPurchasedCount = Convert.ToInt32(reader["UserPurchasedCount"]),
                                 Reviews = new List<Review>()
+
                             };
                         }
 
@@ -408,7 +414,7 @@ namespace Claysys_Online_Course_Learning_portal.DataAccess
             }
         }
 
-      
+        
 
     }
 }

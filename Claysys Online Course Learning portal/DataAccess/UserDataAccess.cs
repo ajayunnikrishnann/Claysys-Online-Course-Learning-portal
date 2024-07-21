@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
+using System.Diagnostics;
+
 using System.Data.SqlClient;
 
 namespace Claysys_Online_Course_Learning_portal.DataAccess
@@ -35,6 +37,8 @@ namespace Claysys_Online_Course_Learning_portal.DataAccess
 
                     con.Open();
                     cmd.ExecuteNonQuery();
+
+                    Debug.WriteLine($"User inserted: {user.Username}");
                 }
             }
         }
@@ -107,6 +111,10 @@ namespace Claysys_Online_Course_Learning_portal.DataAccess
             return user;
         }
 
+
+
+
+
         public bool IsEmailAvailable(string email)
         {
             using (SqlConnection connection = new SqlConnection(_connectionString))
@@ -136,6 +144,7 @@ namespace Claysys_Online_Course_Learning_portal.DataAccess
                 }
             }
         }
+
 
         public List<User> GetAllUsers()
         {
@@ -191,6 +200,8 @@ namespace Claysys_Online_Course_Learning_portal.DataAccess
                 }
             }
         }
+
+        
 
 
     }

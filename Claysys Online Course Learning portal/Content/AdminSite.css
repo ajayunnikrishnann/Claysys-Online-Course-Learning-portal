@@ -15,7 +15,6 @@
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
-/* Existing styles */
 .navbar {
     background: linear-gradient(90deg, #f7de6f, #98f76f, #6ff7e9);
     height: 60px;
@@ -93,13 +92,14 @@
     }
 }
 
-/* Footer */
 footer {
     background: linear-gradient(90deg, #f7de6f, #98f76f, #6ff7e9);
     color: #666777;
     padding: 40px 0;
     border-top: 3px solid #009970;
-    position: sticky;
+    width: 100%;
+    position: relative; /* Changed from sticky to relative */
+    bottom: 0;
 }
 
     footer h6 {
@@ -152,12 +152,8 @@ footer {
         padding: 20px 0;
     }
 
-
-
-
 /* User Management */
 
-/* Common Styles */
 .bodyContainer {
     background: url('images/background.jpg') no-repeat center center fixed;
     background-size: cover;
@@ -168,9 +164,8 @@ footer {
     position: relative;
 }
 
-/* User Management Styles */
 .user-management-container {
-    background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white background */
+    background-color: rgba(255, 255, 255, 0.8);
     padding: 20px;
     margin: 100px auto;
     width: 90%;
@@ -185,7 +180,7 @@ footer {
     }
 
 .user-management-box {
-    overflow-x: auto; /* Allows horizontal scroll for wide tables */
+    overflow-x: auto;
 }
 
 .user-management-table {
@@ -220,6 +215,3 @@ footer {
     .btn-danger:hover {
         background-color: #c9302c;
     }
-
-
-

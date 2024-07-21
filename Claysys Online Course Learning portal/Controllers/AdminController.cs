@@ -8,40 +8,40 @@
     using System.Web;
 
 
-    namespace Claysys_Online_Course_Learning_portal.Controllers
+namespace Claysys_Online_Course_Learning_portal.Controllers
+{
+    public class AdminController : Controller
     {
-        public class AdminController : Controller
+        private readonly AdminDataAccess _adminDataAccess = new AdminDataAccess();
+        private readonly UserDataAccess _userDataAccess = new UserDataAccess();
+        private readonly CourseDataAccess _courseDataAccess = new CourseDataAccess();
+
+        [HttpGet]
+        public ActionResult Signup()
         {
-            private readonly AdminDataAccess _adminDataAccess = new AdminDataAccess();
-            private readonly UserDataAccess _userDataAccess = new UserDataAccess();
-            private readonly CourseDataAccess _courseDataAccess = new CourseDataAccess();
+            return View();
+        }
 
-            [HttpGet]
-            public ActionResult Signup()
+        [HttpPost]
+        public ActionResult Signup(Admin admin)
+        {
+            if (ModelState.IsValid)
             {
-                return View();
+                admin.Password = HashPassword(admin.Password);
+                admin.ConfirmPassword = admin.Password;
+
+                _adminDataAccess.InsertAdmin(admin);
+                return RedirectToAction("Login");
             }
 
-            [HttpPost]
-            public ActionResult Signup(Admin admin)
-            {
-                if (ModelState.IsValid)
-                {
-                    admin.Password = HashPassword(admin.Password);
-                    admin.ConfirmPassword = admin.Password;
+            return View(admin);
+        }
 
-                    _adminDataAccess.InsertAdmin(admin);
-                    return RedirectToAction("Login");
-                }
-
-                return View(admin);
-            }
-
-            [HttpGet]
-            public ActionResult Login()
-            {
-                return View();
-            }
+        [HttpGet]
+        public ActionResult Login()
+        {
+            return View();
+        }
 
         [HttpPost]
         public ActionResult Login(Admin admin)
@@ -87,58 +87,60 @@
 
 
         [HttpGet]
-            public ActionResult Dashboard()
+        public ActionResult Dashboard()
+        {
+            if (Session["AdminName"] != null)
             {
-                if (Session["AdminName"] != null)
-                {
-                    ViewBag.AdminName = Session["AdminName"].ToString();
-                    return View();
-                }
-                else
-                {
-                    return RedirectToAction("Login");
-                }
-            }
-
-            [HttpGet]
-            public ActionResult UserManagement()
-            {
-                var users = _userDataAccess.GetAllUsers();
-                return View(users);
-            }
-
-            [HttpPost]
-            public ActionResult DeleteUser(int userId)
-            {
-                _userDataAccess.DeleteUser(userId);
-                return RedirectToAction("UserManagement");
-            }
-
-
-            private string HashPassword(string password)
-            {
-                return BCrypt.Net.BCrypt.HashPassword(password);
-            }
-
-            private bool VerifyPassword(string password, string hashedPassword)
-            {
-                return BCrypt.Net.BCrypt.Verify(password, hashedPassword);
-            }
-
-
-
-            [HttpGet]
-            public ActionResult CourseManagement()
-            {
-                var courses = _courseDataAccess.GetAllCourses();
-                return View(courses);
-            }
-
-            [HttpGet]
-            public ActionResult CreateCourse()
-            {
+                ViewBag.AdminName = Session["AdminName"].ToString();
                 return View();
             }
+            else
+            {
+                return RedirectToAction("Login");
+            }
+        }
+
+        [HttpGet]
+        public ActionResult UserManagement()
+        {
+            var users = _userDataAccess.GetAllUsers();
+            return View(users);
+        }
+
+        [HttpPost]
+        public ActionResult DeleteUser(int userId)
+        {
+            _userDataAccess.DeleteUser(userId);
+            return RedirectToAction("UserManagement");
+        }
+
+
+        private string HashPassword(string password)
+        {
+            return BCrypt.Net.BCrypt.HashPassword(password);
+        }
+
+        private bool VerifyPassword(string password, string hashedPassword)
+        {
+            return BCrypt.Net.BCrypt.Verify(password, hashedPassword);
+        }
+
+
+
+        [HttpGet]
+        public ActionResult CourseManagement()
+        {
+            var courseDataAccess = new CourseDataAccess();
+            var courses = courseDataAccess.GetAllCourses();
+
+            return View(courses);
+        }
+
+        [HttpGet]
+        public ActionResult CreateCourse()
+        {
+            return View();
+        }
 
         [HttpPost]
         public ActionResult CreateCourse(Course course)
@@ -179,14 +181,14 @@
 
         // GET: Admin/EditCourse/{courseId}
         public ActionResult EditCourse(int courseId)
+        {
+            Course course = _courseDataAccess.GetCourseById(courseId);
+            if (course == null)
             {
-                Course course = _courseDataAccess.GetCourseById(courseId);
-                if (course == null)
-                {
-                    return HttpNotFound();
-                }
-                return View(course);
+                return HttpNotFound();
             }
+            return View(course);
+        }
 
         // POST: Admin/EditCourse
         // POST: Admin/EditCourse
@@ -222,6 +224,15 @@
                 _courseDataAccess.UpdateCourse(course);
                 return RedirectToAction("CourseManagement");
             }
+
+            // Re-fetch the existing course details if ModelState is invalid
+            var existingCourse = _courseDataAccess.GetCourseById(course.CourseId);
+            if (existingCourse != null)
+            {
+                course.ReferenceLinks = existingCourse.ReferenceLinks;
+            }
+
+
             return View(course);
         }
 
@@ -232,22 +243,22 @@
 
         // GET: Admin/DeleteCourse/{courseId}
         public ActionResult DeleteCourse(int courseId)
+        {
+            Course course = _courseDataAccess.GetCourseById(courseId);
+            if (course == null)
             {
-                Course course = _courseDataAccess.GetCourseById(courseId);
-                if (course == null)
-                {
-                    return HttpNotFound();
-                }
-                return View(course);
+                return HttpNotFound();
             }
+            return View(course);
+        }
 
-            // POST: Admin/DeleteCourse/{courseId}
-            [HttpPost, ActionName("DeleteCourse")]
-            public ActionResult DeleteCourseConfirmed(int courseId)
-            {
-                _courseDataAccess.DeleteCourse(courseId);
-                return RedirectToAction("CourseManagement"); // Redirect to course management page or another appropriate action
-            }
+        // POST: Admin/DeleteCourse/{courseId}
+        [HttpPost, ActionName("DeleteCourse")]
+        public ActionResult DeleteCourseConfirmed(int courseId)
+        {
+            _courseDataAccess.DeleteCourse(courseId);
+            return RedirectToAction("CourseManagement"); // Redirect to course management page or another appropriate action
+        }
 
         [HttpGet]
         public ActionResult ViewCourseReviews(int courseId)
@@ -261,5 +272,41 @@
             return View(course);
         }
 
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult SetPurchaseLimit(int CourseId, int PurchaseLimit)
+        {
+            try
+            {
+                var course = _courseDataAccess.GetCourseById(CourseId);
+
+                if (course != null)
+                {
+                    course.PurchaseLimit = PurchaseLimit;
+                    _courseDataAccess.UpdateCourse(course);
+                    return RedirectToAction("CourseManagement", "Admin");
+                }
+                else
+                {
+                    // If course is not found, redirect with an error message
+                    TempData["ErrorMessage"] = "Course not found";
+                    return RedirectToAction("CourseManagement", "Admin");
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log the exception if needed
+                TempData["ErrorMessage"] = ex.Message;
+                return RedirectToAction("CourseManagement", "Admin");
+            }
+        }
+
+
+
+
+
     }
+
 }

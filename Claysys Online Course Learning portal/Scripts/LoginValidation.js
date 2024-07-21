@@ -1,18 +1,16 @@
 document.addEventListener('DOMContentLoaded', function () {
     const form = document.getElementById('login-form');
-
-    const fields = form.querySelectorAll('input, textarea, select');
+    const fields = form.querySelectorAll('input[name="Username"], input[name="Password"]');
     const validations = {
-       
-        'Password': {
-            'regex': /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-            'message': 'Password must be minimum eight characters, at least one letter and one number.'
-        },
-        
         'Username': {
             'regex': /^[a-zA-Z0-9]{3,50}$/,
             'message': 'Username should be between 3 and 50 alphanumeric characters.',
-            'ajax': '/Account/CheckUsername'
+            'required': true
+        },
+        'Password': {
+            'regex': /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+            'message': 'Password must be minimum eight characters, at least one letter and one number.',
+            'required': true
         }
     };
 
@@ -22,51 +20,39 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
+    form.addEventListener('submit', function (e) {
+        let formIsValid = true;
+
+        fields.forEach(field => {
+            if (!validateField(field)) {
+                formIsValid = false;
+            }
+        });
+
+        if (!formIsValid) {
+            e.preventDefault(); // Prevent form submission if validation fails
+        }
+    });
+
     function validateField(field) {
         const fieldName = field.name;
-        const value = field.value;
+        const value = field.value.trim();
         const validation = validations[fieldName];
+        let isValid = true;
 
         if (validation) {
-            let isValid = true;
-
-            if (validation.regex && !validation.regex.test(value)) {
+            if (validation.required && value === '') {
+                isValid = false;
+                showError(field, `${fieldName} is required.`);
+            } else if (validation.regex && !validation.regex.test(value)) {
                 isValid = false;
                 showError(field, validation.message);
-            } else if (validation.match) {
-                const matchValue = form.querySelector(`input[name="${validation.match}"]`).value;
-                if (value !== matchValue) {
-                    isValid = false;
-                    showError(field, validation.message);
-                }
-            } else if (validation.ajax) {
-                checkAvailability(field, validation.ajax);
-                return;
-            }
-
-            if (isValid) {
+            } else if (isValid) {
                 showSuccess(field);
             }
         }
-    }
 
-    function checkAvailability(field, url) {
-        const value = field.value;
-        $.ajax({
-            url: url,
-            type: 'POST',
-            data: { value: value },
-            success: function (response) {
-                if (!response.available) {
-                    showError(field, `${field.name} is already taken.`);
-                } else {
-                    showSuccess(field);
-                }
-            },
-            error: function () {
-                showError(field, 'Server error, please try again later.');
-            }
-        });
+        return isValid;
     }
 
     function showError(field, message) {
@@ -90,8 +76,3 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 });
-
-
-
-
-

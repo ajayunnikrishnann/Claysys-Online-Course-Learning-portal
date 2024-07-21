@@ -1,11 +1,11 @@
 ﻿document.addEventListener('DOMContentLoaded', function () {
     const form = document.getElementById('signup-form');
-   
+
     const fields = form.querySelectorAll('input, textarea, select');
     const validations = {
         'FirstName': {
             'regex': /^[a-zA-Z]{2,50}$/,
-            'message': 'First name should be between 3 and 50 letters.'
+            'message': 'First name should be between 2 and 50 letters.'
         },
         'LastName': {
             'regex': /^[a-zA-Z]{2,50}$/,
@@ -109,8 +109,3 @@
         }
     }
 });
-
-
-
-
-

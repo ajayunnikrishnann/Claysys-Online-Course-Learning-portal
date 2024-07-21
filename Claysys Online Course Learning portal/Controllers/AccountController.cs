@@ -6,6 +6,7 @@ using System.Diagnostics;
 using BCrypt.Net;
 using System.Web;
 using System;
+using System.Text.RegularExpressions;
 using System.Web.Security;
 using System.Net;
 
@@ -17,7 +18,7 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
         private readonly UserDataAccess _userDataAccess = new UserDataAccess();
         private CourseDataAccess courseDataAccess = new CourseDataAccess();
 
-
+       
 
 
         public ActionResult About()
@@ -63,6 +64,7 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
         public ActionResult Login(string username, string password)
         {
             var user = _userDataAccess.GetUserByUsername(username);
+            
 
             if (user == null)
             {
@@ -70,36 +72,31 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
                 return View();
             }
 
-            if (user != null && !VerifyPassword(password, user.Password))
+            if (!VerifyPassword(password, user.Password))
             {
                 ModelState.AddModelError("PasswordIncorrect", "Incorrect password.");
                 return View();
             }
 
-            if (user != null && VerifyPassword(password, user.Password))
-            {
-                FormsAuthentication.SetAuthCookie(user.Username, false);
+            FormsAuthentication.SetAuthCookie(user.Username, false);
 
-                var ticket = new FormsAuthenticationTicket(1, user.Username, DateTime.Now, DateTime.Now.AddMinutes(30), false, "User");
-                string encryptedTicket = FormsAuthentication.Encrypt(ticket);
-                var authCookie = new HttpCookie(".AspNetUserAuth", encryptedTicket);
-                Response.Cookies.Add(authCookie);
+            var ticket = new FormsAuthenticationTicket(1, user.Username, DateTime.Now, DateTime.Now.AddMinutes(30), false, "User");
+            string encryptedTicket = FormsAuthentication.Encrypt(ticket);
+            var authCookie = new HttpCookie(".AspNetUserAuth", encryptedTicket);
+            Response.Cookies.Add(authCookie);
 
-                Session["UserID"] = user.UserID;
-                Session["Username"] = user.Username;
+            Session["UserID"] = user.UserID;
+            Session["Username"] = user.Username;
 
-                return RedirectToAction("Index", "Account");
-            }
-            else
-            {
-                ModelState.AddModelError("", "Invalid username or password.");
-                return View();
-            }
+            return RedirectToAction("Index", "Account");
         }
+
+
 
         [HttpGet]
         public ActionResult Index()
         {
+
             // Check if user is logged in
             if (Session["Username"] != null)
             {
@@ -107,12 +104,15 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
                 ViewBag.IsLoggedIn = true;
 
                 var userId = (int)Session["UserID"];
-                
+                ViewBag.CurrentUserId = userId;
+                ViewBag.TutorID = Session["TutorID"];
+
+
             }
             else
             {
                 ViewBag.IsLoggedIn = false;
-               
+                
             }
 
             var courses = courseDataAccess.GetAllCourses();
@@ -150,6 +150,27 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
         }
 
 
+        private bool IsUsernameTaken(string username)
+        {
+            // Implement your logic to check if the username exists
+            return false;
+        }
+
+        private bool IsPasswordValid(string password)
+    {
+        // Implement your logic to check the password format
+        var regex = new Regex("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$");
+        return regex.IsMatch(password);
+    }
+
+    [HttpPost]
+    public JsonResult ValidatePassword(string password)
+    {
+        bool isValid = IsPasswordValid(password);
+        return Json(new { valid = isValid });
+    }
+
+
         [HttpPost]
         public JsonResult CheckEmail(string value)
         {
@@ -166,6 +187,7 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
             bool isAvailable = dataAccess.IsUsernameAvailable(value);
             return Json(new { available = isAvailable });
         }
+
 
 
         [HttpPost]
@@ -377,20 +399,11 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
         }
 
 
-        public ActionResult TutorIndex()
-        {
-            var courses = courseDataAccess.GetAllCourses();
-
-            foreach (var course in courses)
-            {
-                course.Reviews = courseDataAccess.GetReviewsByCourseId(course.CourseId);
-                Debug.WriteLine($"Course: {course.Title}, AverageReviewScore: {course.AverageReviewScore}, ReviewCount: {course.Reviews.Count}");
-            }
-
-            return View(courses); // Ensure there is a corresponding TutorIndex.cshtml view in Views/Account
-        }
 
        
+
+
+
 
     }
 }

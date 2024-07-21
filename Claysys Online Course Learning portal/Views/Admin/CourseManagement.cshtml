@@ -5,40 +5,85 @@
     Layout = "~/Views/Shared/AdminLayout.cshtml";
 }
 
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8" />
-    <title>@ViewBag.Title</title>
-    <link rel="stylesheet" type="text/css" href="~/Content/CourseManagement.css" />
-</head>
-<body>
-    <h2>Course Management</h2>
+<link href="~/Content/CourseManagement.css" rel="stylesheet" type="text/css" />
+
+<div class="container">
+    <h2>@ViewBag.Title</h2>
 
     <a href="@Url.Action("CreateCourse", "Admin")" class="btn btn-primary">Create New Course</a>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Title</th>
-                <th>User Purchased Count</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var course in Model)
-            {
+    <div class="table-container">
+        <table class="table">
+            <thead>
                 <tr>
-                    <td>@course.Title</td>
-                    <td>@course.UserPurchasedCount</td>
-                    <td>
-                        <a href="@Url.Action("ViewCourseReviews", "Admin", new { courseId = course.CourseId })" class="btn btn-info">View Reviews</a>
-                        <a href="@Url.Action("EditCourse", "Admin", new { courseId = course.CourseId })" class="btn btn-warning">Edit</a>
-                        <a href="@Url.Action("DeleteCourse", "Admin", new { courseId = course.CourseId })" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this course?');">Delete</a>
-                    </td>
+                    <th>Title</th>
+                    <th>User Purchased Count</th>
+                    <th>Purchase Limit</th>
+                    <th>Actions</th>
                 </tr>
-            }
-        </tbody>
-    </table>
-</body>
-</html>
+            </thead>
+            <tbody>
+                @foreach (var course in Model)
+                {
+                    <tr>
+                        <td>@course.Title</td>
+                        <td>@course.UserPurchasedCount</td>
+                        <td>
+                            <div class="purchase-limit-box">@course.PurchaseLimit</div>
+                            <button class="btn btn-info btn-sm" data-toggle="modal" data-target="#setPurchaseLimitModal" data-courseid="@course.CourseId" data-currentlimit="@course.PurchaseLimit">Set Limit</button>
+                        </td>
+                        <td>
+                            <a href="@Url.Action("ViewCourseReviews", "Admin", new { courseId = course.CourseId })" class="btn btn-info">View Reviews</a>
+                            <a href="@Url.Action("EditCourse", "Admin", new { courseId = course.CourseId })" class="btn btn-warning">Edit</a>
+                            <a href="@Url.Action("DeleteCourse", "Admin", new { courseId = course.CourseId })" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this course?');">Delete</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Modal for setting purchase limit -->
+    <div class="modal fade" id="setPurchaseLimitModal" tabindex="-1" role="dialog" aria-labelledby="setPurchaseLimitModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="setPurchaseLimitModalLabel">Set Purchase Limit</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form id="setPurchaseLimitForm" method="post" action="@Url.Action("SetPurchaseLimit", "Admin")">
+                    @Html.AntiForgeryToken()
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="purchaseLimit">Purchase Limit</label>
+                            <input type="hidden" name="CourseId" id="modalCourseId" />
+                            <input type="number" class="form-control" id="modalPurchaseLimit" name="PurchaseLimit" required />
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Ensure jQuery is included -->
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script>
+    $('#setPurchaseLimitModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget); // Button that triggered the modal
+        var courseId = button.data('courseid'); // Extract info from data-* attributes
+        var currentLimit = button.data('currentlimit');
+
+        var modal = $(this);
+        modal.find('#modalCourseId').val(courseId);
+        modal.find('#modalPurchaseLimit').val(currentLimit);
+    });
+</script>

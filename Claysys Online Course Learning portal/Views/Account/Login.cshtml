@@ -5,48 +5,35 @@
 }
 
 <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-<script src="~/Scripts/LoginValidation.js"></script>
+<script src="~/Scripts/LoginValidation.js"></script> <!-- Include your LoginValidation.js script -->
+
 <div class="background-section">
     <div class="login-form">
         @using (Html.BeginForm("Login", "Account", FormMethod.Post, new { id = "login-form" }))
         {
-            <h2 class="logincolor">Login</h2>
+            <h2 class="loginscolor">Log in</h2>
             <div class="content">
                 <div class="input-row">
                     <div class="inputbox">
                         @Html.LabelFor(m => m.Username)
-                        @Html.TextBoxFor(m => m.Username, new { @class = "form-control", name = "username", placeholder = "Enter Username" })
+                        @Html.TextBoxFor(m => m.Username, new { @class = "form-control", name = "Username", placeholder = "Enter your username" })
                         @Html.ValidationMessageFor(m => m.Username, "", new { @class = "text-danger" })
-                        @if (ViewData.ModelState["UsernameNotFound"] != null)
-                        {
-                            <div class="text-danger">@ViewData.ModelState["UsernameNotFound"].Errors.FirstOrDefault().ErrorMessage</div>
-                        }
                     </div>
                 </div>
 
                 <div class="input-row">
                     <div class="inputbox">
                         @Html.LabelFor(m => m.Password)
-                        @Html.PasswordFor(m => m.Password, new { @class = "form-control", name = "password", placeholder = "Enter Password" })
+                        @Html.PasswordFor(m => m.Password, new { @class = "form-control", name = "Password", placeholder = "Enter your password" })
                         @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
-                        @if (ViewData.ModelState["PasswordIncorrect"] != null)
-                        {
-                            <div class="text-danger">@ViewData.ModelState["PasswordIncorrect"].Errors.FirstOrDefault().ErrorMessage</div>
-                        }
                     </div>
                 </div>
 
                 <div class="input-row">
                     <div class="inputbox">
-                        <input type="submit" class="btn btn-primary login-button" value="Login" />
-                    </div>
-                </div>
-
-                <div class="input-row">
-                    <div class="inputbox">
-                        <a style="color: black" href="@Url.Action("Signup", "Account")">Don't have an account? Signup</a>
+                        <input type="submit" class="btn btn-primary login-button" value="Log in" />
                     </div>
                 </div>
             </div>

@@ -187,6 +187,7 @@
     <Content Include="Content\Index.css" />
     <Content Include="Content\TutorCreateCourse.css" />
     <Content Include="Content\TutorIndex.css" />
+    <Content Include="Content\TutorLayout.css" />
     <Content Include="Content\ViewDetail.css" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
@@ -244,6 +245,8 @@
     <Content Include="Views\Tutor\CreateCourse.cshtml" />
     <Content Include="Views\Tutor\SignupTutor.cshtml" />
     <Content Include="Views\Tutor\LoginTutor.cshtml" />
+    <Content Include="Views\Admin\_SetPurchaseLimitPartial.cshtml" />
+    <Content Include="Views\Shared\TutorLayout.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

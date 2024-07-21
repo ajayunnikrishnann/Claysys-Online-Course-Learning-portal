@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using BCrypt.Net;
+using System.Diagnostics;
 using Claysys_Online_Course_Learning_portal.DataAccess;
 using System.Web.Mvc;
 using Claysys_Online_Course_Learning_portal.Models;
@@ -24,7 +25,29 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
 
         public ActionResult TutorIndex()
         {
+            // Check if user is logged in
+            if (Session["Username"] != null)
+            {
+                ViewBag.Username = Session["Username"].ToString();
+                ViewBag.IsLoggedIn = true;
+
+                var userId = (int)Session["UserID"];
+
+            }
+            else
+            {
+                ViewBag.IsLoggedIn = false;
+
+            }
+
             var courses = _courseDataAccess.GetAllCourses();
+
+            foreach (var course in courses)
+            {
+                course.Reviews = _courseDataAccess.GetReviewsByCourseId(course.CourseId);
+                Debug.WriteLine($"Course: {course.Title}, AverageReviewScore: {course.AverageReviewScore}, ReviewCount: {course.Reviews.Count}");
+            }
+
             return View(courses);
         }
 

@@ -1,17 +1,20 @@
 ﻿@model IEnumerable<Claysys_Online_Course_Learning_portal.Models.Course>
 
 @{
-    ViewBag.Title = "Tutor Home";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Home";
+    Layout = "~/Views/Shared/TutorLayout.cshtml";
 }
 
 @section styles {
-    <link href="~/Content/Index.css" rel="stylesheet" type="text/css" />
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" />
 
+    <link href="~/Content/TutorIndex.css" rel="stylesheet" type="text/css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
 }
 
 @section scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script>
         var slideIndex = 0;
         showSlides();
@@ -28,47 +31,70 @@
             setTimeout(showSlides, 2000); // Change image every 2 seconds
         }
 
-        document.addEventListener("DOMContentLoaded", function () {
-            var enrollButtons = document.querySelectorAll(".enrollButton");
-            enrollButtons.forEach(function (button) {
-                button.addEventListener("click", function () {
-                    var courseId = this.getAttribute("data-course-id");
-                    var confirmEnrollButton = document.getElementById("confirmEnrollButton");
-                    confirmEnrollButton.setAttribute("data-course-id", courseId);
-                    $('#enrollModal').modal('show');
-                });
+        $(document).ready(function () {
+            $('.enrollButton').click(function () {
+                var courseId = $(this).data('course-id');
+                var isUserLoggedIn = @(Session["UserID"] != null ? "true" : "false");
+                var isAlreadyEnrolled = $(this).text() === "Already Enrolled";
+
+                console.log('Enroll button clicked');
+                if (!isUserLoggedIn) {
+                    toastr.warning('You need to log in to enroll in a course.');
+                    return;
+                }
+
+                if (isAlreadyEnrolled) {
+                    toastr.info('You are already enrolled in this course.');
+                    return;
+                }
+
+                $('#confirmEnrollButton').data('course-id', courseId); // Store courseId in the modal button
+                $('#enrollModal').modal('show'); // Show the modal
             });
 
-            document.getElementById("confirmEnrollButton").addEventListener("click", function () {
-                var courseId = this.getAttribute("data-course-id");
-                var url = '@Url.Action("ViewDetail", "Account")';
-                window.location.href = url + '/' + courseId;
+            $('#confirmEnrollButton').click(function () {
+                var courseId = $(this).data('course-id');
+                console.log('Confirm enroll button clicked with course ID:', courseId);
+                $.ajax({
+                    url: '@Url.Action("Enroll", "Account")',
+                    type: 'POST',
+                    data: { courseId: courseId },
+                    success: function (response) {
+                        console.log('AJAX call successful', response);
+                        if (response.success) {
+                            window.location.href = '@Url.Action("ViewDetail", "Account")?id=' + courseId;
+                        } else {
+                            if (response.redirectUrl) {
+                                window.location.href = response.redirectUrl;
+                            } else {
+                                toastr.error(response.message);
+                            }
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('AJAX call failed', xhr, status, error);
+                        toastr.error('An error occurred during the request.');
+                    }
+                });
             });
         });
     </script>
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 }
-
-
 
 <div class="slideshow-container">
     <div class="mySlides fade">
         <img src="@Url.Content("~/Content/images/slider5.jpeg")" style="width:100%">
     </div>
     <div class="mySlides fade">
-        <img src="@Url.Content("~/Content/images/slider6.jpg")" style="width:100%">
+        <img src="@Url.Content("~/Content/images/slider9.jpg")" style="width:100%">
     </div>
     <div class="mySlides fade">
-        <img src="@Url.Content("~/Content/images/slider7.jpg")" style="width:100%">
+        <img src="@Url.Content("~/Content/images/slider6.jpg")" style="width:100%">
     </div>
     <div class="mySlides fade">
         <img src="@Url.Content("~/Content/images/slider8.jpg")" style="width:100%">
     </div>
 </div>
-
-<a href="@Url.Action("CreateCourse", "Tutor")" class="btn btn-primary" style="margin-left:130px; margin-top:10px">Create New Course</a>
 
 <div class="container mt-4">
     <h3>Courses</h3>
@@ -76,7 +102,7 @@
         @foreach (var course in Model)
         {
             <div class="col-md-3 mb-4">
-                <div class="course-card custom-card">
+                <div class="course-card ">
                     <img src="@($"data:image/jpeg;base64,{course.ImageBase64}")" class="course-image" alt="@course.Title">
                     <h5 class="course-title">@course.Title</h5>
                     <div class="course-reviews">
@@ -86,14 +112,36 @@
                         }
                         <span class="review-count">(@course.Reviews.Count) Reviews</span>
                     </div>
-                    <a href="javascript:void(0);" class="btn custom-btn enrollButton" data-course-id="@course.CourseId">
-                        @(ViewBag.EnrolledCourses != null && ViewBag.EnrolledCourses.Contains(course.CourseId) ? "Already Enrolled" : "View Detail")
-                    </a>
+
+                    @{
+                        var tutorId = Session["TutorID"] != null ? (int)Session["TutorID"] : -1; // Default to -1 or any value that won’t match a valid ID
+                    }
+
+                    @if (course.CreatedByTutorId == tutorId)
+                    {
+                        <a href="@Url.Action("ViewCourse", "Tutor", new { id = course.CourseId })" class="btn btn-secondary">View Course</a>
+                    }
+                    else
+                    {
+                        <a href="javascript:void(0);" class="btn custom-btn enrollButton" data-course-id="@course.CourseId">
+                            @(ViewBag.EnrolledCourses != null && ViewBag.EnrolledCourses.Contains(course.CourseId) ? "Already Enrolled" : "Enroll")
+                        </a>
+                    }
                 </div>
             </div>
         }
+
+        <!-- Add new course card -->
+        <div class="col-md-3 mb-4">
+            <div class="course-card create-course-card">
+                <img src="@Url.Content("~/Content/images/create.png")" class="course-image" alt="Create New Course">
+                <h5 class="course-title">Create New Course</h5>
+                <a href="@Url.Action("CreateCourse", "Tutor")" class="btn btn-primary">Create Course</a>
+            </div>
+        </div>
     </div>
 </div>
+   
 
 <div class="modal fade" id="enrollModal" tabindex="-1" aria-labelledby="enrollModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -112,4 +160,3 @@
         </div>
     </div>
 </div>
-
