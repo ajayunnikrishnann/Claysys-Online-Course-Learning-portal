@@ -184,7 +184,7 @@
 
 /* Signup page */
 .background-section {
-    background: url('../Content/images/banner4.jpg') no-repeat center center fixed;
+    background: url('images/banner10.jpg') no-repeat center center fixed;
     background-size: cover;
     height: 100vh;
     display: flex;

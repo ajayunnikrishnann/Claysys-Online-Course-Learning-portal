@@ -6,6 +6,7 @@ using System.Linq;
 using System.Web;
 using System.Collections.Generic;
 using System;
+using Claysys_Online_Course_Learning_portal.Controllers;
 
 
 
@@ -413,8 +414,6 @@ namespace Claysys_Online_Course_Learning_portal.DataAccess
                 command.ExecuteNonQuery();
             }
         }
-
-        
 
     }
 }

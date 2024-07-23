@@ -1,0 +1,111 @@
+﻿@model IEnumerable<EnrollmentRequest>
+
+@{
+    ViewBag.Title = "Manage Enrollment Requests";
+    Layout = "~/Views/Shared/AdminLayout.cshtml";
+}
+
+<link rel="stylesheet" href="~/Content/ManageEnrollmentRequests.css" />
+
+<div class="container">
+    <h2>Manage Enrollment Requests</h2>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>User</th>
+                <th>Course</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Request Date</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var request in Model)
+            {
+                <tr>
+                    <td>@request.Id</td>
+                    <td>@request.Username</td>
+                    <td>@request.CourseTitle</td>
+                    <td>@request.Email</td>
+                    <td>@request.PhoneNumber</td>
+                    <td>@request.RequestDate</td>
+                    <td>
+                        @if (request.IsApproved)
+                        {
+                            <span class="badge badge-success">Approved</span>
+                        }
+                        else if (request.IsRejected)
+                        {
+                            <span class="badge badge-danger">Rejected</span>
+                        }
+                        else
+                        {
+                            <span class="badge badge-warning">Pending</span>
+                        }
+                    </td>
+                    <td>
+                        @if (!request.IsApproved && !request.IsRejected)
+                        {
+                            <button class="btn btn-success approve-btn" data-request-id="@request.Id">Approve</button>
+                            <button class="btn btn-danger reject-btn" data-request-id="@request.Id">Reject</button>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            $('.approve-btn').click(function() {
+                var button = $(this);
+                var requestId = button.data('request-id');
+
+                $.ajax({
+                    url: '@Url.Action("ApproveRequest", "Admin")',
+                    type: 'POST',
+                    data: { id: requestId },
+                    success: function(response) {
+                        if (response.success) {
+                            button.prop('disabled', true).siblings('.reject-btn').prop('disabled', true);
+                            button.closest('tr').find('.badge').removeClass('badge-warning').addClass('badge-success').text('Approved');
+                        } else {
+                            alert('Error: ' + response.message);
+                        }
+                    },
+                    error: function() {
+                        alert('An error occurred. Please try again.');
+                    }
+                });
+            });
+
+            $('.reject-btn').click(function() {
+                var button = $(this);
+                var requestId = button.data('request-id');
+
+                $.ajax({
+                    url: '@Url.Action("RejectRequest", "Admin")',
+                    type: 'POST',
+                    data: { id: requestId },
+                    success: function(response) {
+                        if (response.success) {
+                            button.prop('disabled', true).siblings('.approve-btn').prop('disabled', true);
+                            button.closest('tr').find('.badge').removeClass('badge-warning').addClass('badge-danger').text('Rejected');
+                        } else {
+                            alert('Error: ' + response.message);
+                        }
+                    },
+                    error: function() {
+                        alert('An error occurred. Please try again.');
+                    }
+                });
+            });
+        });
+    </script>
+}

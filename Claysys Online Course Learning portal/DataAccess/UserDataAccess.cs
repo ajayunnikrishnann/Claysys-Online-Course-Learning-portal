@@ -191,17 +191,24 @@ namespace Claysys_Online_Course_Learning_portal.DataAccess
         {
             using (SqlConnection con = new SqlConnection(_connectionString))
             {
+                // Delete related enrollment records
+                using (SqlCommand cmd = new SqlCommand("DELETE FROM Enrollments WHERE UserId = @UserID", con))
+                {
+                    cmd.Parameters.AddWithValue("@UserID", userId);
+                    con.Open();
+                    cmd.ExecuteNonQuery();
+                }
+
+                // Delete the user
                 using (SqlCommand cmd = new SqlCommand("sp_DeleteUserById", con))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@UserID", userId);
-                    con.Open();
                     cmd.ExecuteNonQuery();
                 }
             }
         }
 
-        
 
 
     }

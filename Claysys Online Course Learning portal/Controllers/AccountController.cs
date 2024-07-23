@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Web.Mvc;
+using System.Linq;
 using Claysys_Online_Course_Learning_portal.DataAccess;
 using Claysys_Online_Course_Learning_portal.Models;
 using System.Diagnostics;
@@ -9,16 +10,21 @@ using System;
 using System.Text.RegularExpressions;
 using System.Web.Security;
 using System.Net;
+using System.Web.Configuration;
+using System.Configuration;
 
 
 namespace Claysys_Online_Course_Learning_portal.Controllers
 {
     public class AccountController : Controller
     {
+       
+
+
         private readonly UserDataAccess _userDataAccess = new UserDataAccess();
         private CourseDataAccess courseDataAccess = new CourseDataAccess();
+        private readonly EnrollmentRequestDataAccess _enrollmentRequestDataAccess = new EnrollmentRequestDataAccess(ConfigurationManager.ConnectionStrings["MyAppDbContext"].ConnectionString);
 
-       
 
 
         public ActionResult About()
@@ -54,6 +60,7 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
             return View(user);
         }
 
+        
         [HttpGet]
         public ActionResult Login()
         {
@@ -64,7 +71,7 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
         public ActionResult Login(string username, string password)
         {
             var user = _userDataAccess.GetUserByUsername(username);
-            
+
 
             if (user == null)
             {
@@ -87,8 +94,11 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
 
             Session["UserID"] = user.UserID;
             Session["Username"] = user.Username;
+            Session["Email"] = user.Email;  // Store email in session
+            Session["PhoneNumber"] = user.Phone;  // Store phone number in session
 
             return RedirectToAction("Index", "Account");
+                
         }
 
 
@@ -96,6 +106,9 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
         [HttpGet]
         public ActionResult Index()
         {
+            var courses = courseDataAccess.GetAllCourses();
+
+           
 
             // Check if user is logged in
             if (Session["Username"] != null)
@@ -107,27 +120,25 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
                 ViewBag.CurrentUserId = userId;
                 ViewBag.TutorID = Session["TutorID"];
 
+                ViewBag.EnrolledCourses = _enrollmentRequestDataAccess.GetEnrollmentRequestsByUserId(Convert.ToInt32(Session["UserID"])).Select(r => r.CourseId).ToList();
+                ViewBag.ApprovedCourses = _enrollmentRequestDataAccess.GetApprovedEnrollmentRequestsByUserId(Convert.ToInt32(Session["UserID"])).Select(r => r.CourseId).ToList();
 
             }
             else
             {
                 ViewBag.IsLoggedIn = false;
-                
+                ViewBag.EnrolledCourses = new List<int>(); // Empty list when the user is not logged in
+                ViewBag.ApprovedCourses = new List<int>(); // Empty list when the user is not logged in
             }
 
-            var courses = courseDataAccess.GetAllCourses();
-
+            // Get reviews for each course
             foreach (var course in courses)
             {
                 course.Reviews = courseDataAccess.GetReviewsByCourseId(course.CourseId);
-                Debug.WriteLine($"Course: {course.Title}, AverageReviewScore: {course.AverageReviewScore}, ReviewCount: {course.Reviews.Count}");
             }
 
             return View(courses); // Ensure there is a corresponding Index.cshtml view in Views/Account
         }
-
-
-
 
 
 
@@ -157,18 +168,18 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
         }
 
         private bool IsPasswordValid(string password)
-    {
-        // Implement your logic to check the password format
-        var regex = new Regex("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$");
-        return regex.IsMatch(password);
-    }
+        {
+            // Implement your logic to check the password format
+            var regex = new Regex("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$");
+            return regex.IsMatch(password);
+        }
 
-    [HttpPost]
-    public JsonResult ValidatePassword(string password)
-    {
-        bool isValid = IsPasswordValid(password);
-        return Json(new { valid = isValid });
-    }
+        [HttpPost]
+        public JsonResult ValidatePassword(string password)
+        {
+            bool isValid = IsPasswordValid(password);
+            return Json(new { valid = isValid });
+        }
 
 
         [HttpPost]
@@ -352,60 +363,76 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
             return View(model);
         }
 
-
         [HttpPost]
-        public JsonResult Enroll(int courseId)
+        public JsonResult RequestEnrollment(int courseId)
         {
-
             if (Session["UserID"] == null)
             {
-                return Json(new { success = false, redirectUrl = Url.Action("Login", "Account"), message = "You need to log in first." });
+                return Json(new { success = false, message = "User is not logged in." });
             }
 
-            try
+            int userId = (int)Session["UserID"];
+            var username = Session["Username"].ToString();
+            var email = Session["Email"].ToString();
+            var phoneNumber = Session["PhoneNumber"].ToString();
+
+            // Get the course title using the courseId
+            var course = courseDataAccess.GetCourseById(courseId);
+            if (course == null)
             {
-                var userId = (int)Session["UserID"];
-                if (!courseDataAccess.IsUserEnrolledInCourse(userId, courseId))
-                {
-                    courseDataAccess.AddEnrollment(userId, courseId);
-
-                    var course = courseDataAccess.GetCourseById(courseId);
-                    if (course != null)
-                    {
-                        // Increment the UserPurchasedCount
-                        course.UserPurchasedCount += 1;
-                        courseDataAccess.UpdateCourse(course);
-
-                        // Return success response
-                        return Json(new { success = true });
-                    }
-                }
-                else
-                {
-                    // Return error response if user is already enrolled
-                    return Json(new { success = false, message = "You are already enrolled in this course." });
-                }
+                return Json(new { success = false, message = "Course not found." });
             }
-            catch (Exception ex)
+
+            var enrollmentRequest = new EnrollmentRequest
             {
-                // Log the exception and return error response
-                Debug.WriteLine($"An error occurred: {ex.Message}");
-                Debug.WriteLine(ex.StackTrace);
-                return Json(new { success = false, message = "An error occurred during enrollment." });
-            }
+                UserId = userId,
+                CourseId = courseId,
+                CourseTitle = course.Title,
+                Username = username,
+                Email = email,
+                PhoneNumber = phoneNumber,
+                RequestDate = DateTime.Now,
+                IsApproved = false,
+                IsRejected = false
+            };
 
-            // Return error response if course is not found or other conditions
-            return Json(new { success = false, message = "An error occurred during enrollment." });
+            _enrollmentRequestDataAccess.InsertEnrollmentRequest(enrollmentRequest);
+
+            return Json(new { success = true });
         }
 
+        [HttpPost]
+        public JsonResult GetEnrollmentStatus(int courseId)
+        {
+            if (Session["UserID"] == null)
+            {
+                return Json(new { success = false, message = "User is not logged in." });
+            }
 
+            int userId = (int)Session["UserID"];
+            var enrollmentRequests = _enrollmentRequestDataAccess.GetEnrollmentRequestsByUserId(userId);
+            var request = enrollmentRequests.FirstOrDefault(r => r.CourseId == courseId);
 
-       
+            if (request == null)
+            {
+                return Json(new { success = true, status = "Not Enrolled" });
+            }
 
+            if (request.IsApproved)
+            {
+                return Json(new { success = true, status = "Approved" });
+            }
 
+            if (request.IsRejected)
+            {
+                return Json(new { success = true, status = "Rejected" });
+            }
 
+            return Json(new { success = true, status = "Enrollment Requested" });
+        }
 
     }
 }
+
 
 

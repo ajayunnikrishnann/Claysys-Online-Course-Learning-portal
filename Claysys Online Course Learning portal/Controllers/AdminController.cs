@@ -1,11 +1,13 @@
 ﻿    using System.Web.Mvc;
-    using Claysys_Online_Course_Learning_portal.DataAccess;
+using Claysys_Online_Course_Learning_portal.Attributes;
+using Claysys_Online_Course_Learning_portal.DataAccess;
     using Claysys_Online_Course_Learning_portal.Models;
     using BCrypt.Net;
     using System.Web.Security;
     using System.IO;
     using System;
     using System.Web;
+using System.Configuration;
 
 
 namespace Claysys_Online_Course_Learning_portal.Controllers
@@ -15,6 +17,7 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
         private readonly AdminDataAccess _adminDataAccess = new AdminDataAccess();
         private readonly UserDataAccess _userDataAccess = new UserDataAccess();
         private readonly CourseDataAccess _courseDataAccess = new CourseDataAccess();
+        private readonly EnrollmentRequestDataAccess _enrollmentRequestDataAccess = new EnrollmentRequestDataAccess(ConfigurationManager.ConnectionStrings["MyAppDbContext"].ConnectionString);
 
         [HttpGet]
         public ActionResult Signup()
@@ -100,6 +103,7 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
             }
         }
 
+        [AdminAuthorize]
         [HttpGet]
         public ActionResult UserManagement()
         {
@@ -126,7 +130,7 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
         }
 
 
-
+        [AdminAuthorize]
         [HttpGet]
         public ActionResult CourseManagement()
         {
@@ -237,7 +241,7 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
         }
 
 
-
+        
 
 
 
@@ -304,7 +308,40 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
         }
 
 
+        [HttpGet]
+        public ActionResult ManageEnrollmentRequests()
+        {
+            var requests = _enrollmentRequestDataAccess.GetAllEnrollmentRequests();
+            return View(requests);
+        }
 
+        [HttpPost]
+        public JsonResult ApproveRequest(int id)
+        {
+            try
+            {
+                _enrollmentRequestDataAccess.UpdateEnrollmentRequestStatus(id, true, false);
+                return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        public JsonResult RejectRequest(int id)
+        {
+            try
+            {
+                _enrollmentRequestDataAccess.UpdateEnrollmentRequestStatus(id, false, true);
+                return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
 
 
     }

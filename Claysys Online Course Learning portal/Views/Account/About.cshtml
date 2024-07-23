@@ -1,5 +1,4 @@
-﻿
-@{
+﻿@{
     ViewBag.Title = "About";
 }
 
@@ -8,22 +7,109 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About us</title>
-    <link rel="stylesheet" href="~/Content/About.css"> <!-- Link to your external CSS file -->
+    <title>About Us</title>
+    <link rel="stylesheet" href="~/Content/About.css">
+    <style>
+        .slider-container {
+            position: relative;
+            max-width: 100%;
+            margin: auto;
+            overflow: hidden;
+        }
+
+        .slider {
+            display: flex;
+            transition: transform 0.5s ease;
+        }
+
+            .slider img {
+                width: 50%;
+            }
+
+        .prev, .next {
+            cursor: pointer;
+            position: absolute;
+            top: 50%;
+            width: auto;
+            padding: 16px;
+            margin-top: -22px;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+            transition: 0.6s ease;
+            user-select: none;
+            background-color: rgba(0,0,0,0.8);
+            z-index: 1;
+        }
+
+        .next {
+            right: 0;
+            border-radius: 3px 0 0 3px;
+        }
+
+        .prev {
+            left: 0;
+            border-radius: 0 3px 3px 0;
+        }
+
+            .prev:hover, .next:hover {
+                background-color: rgba(0,0,0,1);
+            }
+    </style>
 </head>
 <body>
     <!-- Main content container -->
     <div class="container">
         <!-- About section -->
         <div class="about-section">
-            <h1>About Find Doctor</h1>
-            <p>Welcome to Find Doctor, your trusted platform for booking medical appointments online. We strive to connect patients with healthcare providers efficiently and conveniently.</p>
-            <p>At Find Doctor, we understand the importance of accessible healthcare. Our mission is to simplify the process of finding and booking appointments with doctors, specialists, and healthcare professionals.</p>
-            <p>Whether you're looking for a routine check-up or seeking specialized care, Find Doctor is here to help. Our user-friendly interface and comprehensive listings make it easy to find the right healthcare provider for your needs.</p>
-            <p>Join thousands of satisfied users who have benefited from our seamless booking experience. Discover the power of convenient healthcare access with Find Doctor today!</p>
+            <h1>Claysys Online Course Learning Platform</h1>
+            <p>Welcome to Claysys Online Course Learning Platform, your number one source for learning new skills, advancing your career, and achieving your personal and professional goals. We're dedicated to providing you the very best of online education with a focus on quality content, interactive learning, and student satisfaction.</p>
+            <p>Our mission is to democratize education by making high-quality learning accessible and affordable to everyone, everywhere. We believe in the power of education to transform lives and communities, and we strive to offer courses that are both practical and inspiring.</p>
+
+            <p>
+                <strong>Email:</strong> support@claysys.com<br>
+                <strong>Phone:</strong> +1 (800) 123-4567
+            </p>
+            <div class="gallery-section">
+                <h2>Gallery</h2>
+                <div class="slider-container">
+                    <span class="prev" onclick="changeSlide(-1)">&#10094;</span>
+                    <span class="next" onclick="changeSlide(1)">&#10095;</span>
+                    <div class="slider">
+                        <img src="~/Content/Images/course1.jpg" alt="Course Image 1">
+                        <img src="~/Content/Images/course2.jpg" alt="Course Image 2">
+                        <img src="~/Content/Images/course3.jpg" alt="Course Image 3">
+                        <img src="~/Content/Images/course4.jpg" alt="Course Image 4">
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
+
+    <script>
+        let currentSlideIndex = 0;
+        const slides = document.querySelectorAll('.slider img');
+        const slidesToShow = 2; // Number of slides to show at a time
+        const totalSlides = slides.length;
+        const maxSlideIndex = totalSlides - slidesToShow;
+
+        function changeSlide(direction) {
+            currentSlideIndex += direction;
+
+            if (currentSlideIndex < 0) {
+                currentSlideIndex = maxSlideIndex;
+            }
+
+            if (currentSlideIndex > maxSlideIndex) {
+                currentSlideIndex = 0;
+            }
+
+            const offset = -(100 / slidesToShow) * currentSlideIndex;
+            document.querySelector('.slider').style.transform = `translateX(${offset}%)`;
+        }
+
+        // Initialize the first set of slides as active
+        changeSlide(0);
+    </script>
 </body>
 </html>
-
-

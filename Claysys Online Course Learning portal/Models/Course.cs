@@ -30,6 +30,8 @@ namespace Claysys_Online_Course_Learning_portal.Models
 
         public int PurchaseLimit { get; set; } // Maximum number of users who can purchase the course
 
+
+
         public virtual ICollection<Review> Reviews { get; set; } // Course reviews
 
         // Constructor to initialize Reviews collection
