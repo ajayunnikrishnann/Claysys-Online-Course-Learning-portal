@@ -1,4 +1,4 @@
-﻿@model Claysys_Online_Course_Learning_portal.Models.User
+﻿@model Claysys_Online_Course_Learning_portal.Models.Tutor
 
 @{
     ViewBag.Title = "LoginTutor";
@@ -8,11 +8,11 @@
 <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-<script src="~/Scripts/validation.js"></script>
+<script src="~/Scripts/LoginValidation.js"></script>
 <link href="~/Content/TutorLayout.css" rel="stylesheet" type="text/css" />
 <div class="background-section">
     <div class="login-form">
-        @using (Html.BeginForm("LoginTutor", "Tutor", FormMethod.Post, new { id = "login-form" }))
+        @using (Html.BeginForm("LoginTutor", "Tutor", FormMethod.Post, new { id = "login-form", role = "form" }))
         {
             <h2 class="logincolor">Login</h2>
             <div class="content">

@@ -111,7 +111,43 @@ namespace Claysys_Online_Course_Learning_portal.DataAccess
             return user;
         }
 
+        public Tutor GetTutorByUsername(string username)
+        {
+            Tutor tutor = null;
 
+            using (SqlConnection con = new SqlConnection(_connectionString))
+            {
+                string query = "SELECT * FROM Users WHERE Username = @Username AND Role = 'Tutor'";
+                using (SqlCommand cmd = new SqlCommand(query, con))
+                {
+                    cmd.Parameters.AddWithValue("@Username", username);
+                    con.Open();
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            tutor = new Tutor
+                            {
+                                TutorID = Convert.ToInt32(reader["UserID"]), // Assuming UserID is same as TutorID
+                                FirstName = reader["FirstName"].ToString(),
+                                LastName = reader["LastName"].ToString(),
+                                DateOfBirth = Convert.ToDateTime(reader["DateOfBirth"]),
+                                Gender = reader["Gender"].ToString(),
+                                Phone = reader["Phone"].ToString(),
+                                Email = reader["Email"].ToString(),
+                                Address = reader["Address"].ToString(),
+                                State = reader["State"].ToString(),
+                                City = reader["City"].ToString(),
+                                Username = reader["Username"].ToString(),
+                                Password = reader["Password"].ToString(),
+                                Role = reader["Role"].ToString()
+                            };
+                        }
+                    }
+                }
+            }
+            return tutor;
+        }
 
 
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Claysys_Online_Course_Learning_portal.Models
 {
@@ -57,6 +58,9 @@ namespace Claysys_Online_Course_Learning_portal.Models
         [Required]
         [StringLength(256)]
         [DataType(DataType.Password)]
+        [NotMapped]
         public string ConfirmPassword { get; set; }
+
+        public string Role { get; set; }  
     }
 }

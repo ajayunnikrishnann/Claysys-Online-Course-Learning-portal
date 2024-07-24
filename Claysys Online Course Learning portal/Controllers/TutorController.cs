@@ -9,6 +9,10 @@ using System.Web.Mvc;
 using Claysys_Online_Course_Learning_portal.Models;
 using System.IO;
 using System.Web.Security;
+using System.Data.SqlClient;
+using System.Data;
+using System.Configuration;
+using System.Reflection;
 
 namespace Claysys_Online_Course_Learning_portal.Controllers
 {
@@ -17,7 +21,7 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
 
         private readonly CourseDataAccess _courseDataAccess;
         private readonly UserDataAccess _userDataAccess = new UserDataAccess();
-
+        private readonly string _connectionString = ConfigurationManager.ConnectionStrings["MyAppDbContext"].ConnectionString;
         public TutorController()
         {
             _courseDataAccess = new CourseDataAccess();
@@ -100,24 +104,49 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
         }
 
         [HttpPost]
-        public ActionResult SignupTutor(User user)
+        public ActionResult SignupTutor(Tutor tutor)
         {
             if (ModelState.IsValid)
             {
-                user.Password = HashPassword(user.Password);
-                user.ConfirmPassword = user.Password;
+                if (tutor.Password != tutor.ConfirmPassword)
+                {
+                    ModelState.AddModelError("", "Passwords do not match.");
+                    return View(tutor);
+                }
 
-                _userDataAccess.InsertUser(user);
+                using (SqlConnection con = new SqlConnection(_connectionString))
+                {
+                    using (SqlCommand cmd = new SqlCommand("sp_TutorSignup", con))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("@FirstName", tutor.FirstName);
+                        cmd.Parameters.AddWithValue("@LastName", tutor.LastName);
+                        cmd.Parameters.AddWithValue("@DateOfBirth", tutor.DateOfBirth);
+                        cmd.Parameters.AddWithValue("@Gender", tutor.Gender);
+                        cmd.Parameters.AddWithValue("@Phone", tutor.Phone);
+                        cmd.Parameters.AddWithValue("@Email", tutor.Email);
+                        cmd.Parameters.AddWithValue("@Address", tutor.Address);
+                        cmd.Parameters.AddWithValue("@State", tutor.State);
+                        cmd.Parameters.AddWithValue("@City", tutor.City);
+                        cmd.Parameters.AddWithValue("@Username", tutor.Username);
+                        cmd.Parameters.AddWithValue("@Password", BCrypt.Net.BCrypt.HashPassword(tutor.Password));
+                        cmd.Parameters.AddWithValue("@Role", "Tutor"); // Set role to 'Tutor'
+
+                        con.Open();
+                        cmd.ExecuteNonQuery();
+                        con.Close();
+                    }
+                }
                 return RedirectToAction("LoginTutor");
             }
 
             PopulateStateAndCityLists(); // Sync method for redisplaying form
-            return View(user);
+            return View(tutor);
         }
 
 
         [HttpGet]
-        public ActionResult Logintutor()
+        public ActionResult LoginTutor()
         {
             return View();
         }
@@ -125,19 +154,26 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
         [HttpPost]
         public ActionResult LoginTutor(string username, string password)
         {
-            var user = _userDataAccess.GetUserByUsername(username);
+            var tutor = _userDataAccess.GetTutorByUsername(username);
+           
 
-            if (user != null && VerifyPassword(password, user.Password))
+            if (tutor != null && VerifyPassword(password, tutor.Password))
             {
-                FormsAuthentication.SetAuthCookie(user.Username, false);
+                if (tutor.Role != "Tutor")
+                {
+                    ModelState.AddModelError("", "You do not have permission to access this page.");
+                    return View();
+                }
 
-                var ticket = new FormsAuthenticationTicket(1, user.Username, DateTime.Now, DateTime.Now.AddMinutes(30), false, "User");
+                FormsAuthentication.SetAuthCookie(tutor.Username, false);
+
+                var ticket = new FormsAuthenticationTicket(1, tutor.Username, DateTime.Now, DateTime.Now.AddMinutes(30), false, "Tutor");
                 string encryptedTicket = FormsAuthentication.Encrypt(ticket);
-                var authCookie = new HttpCookie(".AspNetUserAuth", encryptedTicket);
+                var authCookie = new HttpCookie(".AspNetTutorAuth", encryptedTicket);
                 Response.Cookies.Add(authCookie);
 
-                Session["UserID"] = user.UserID;
-                Session["Username"] = user.Username;
+                Session["UserID"] = tutor.TutorID;
+                Session["Username"] = tutor.Username;
 
                 return RedirectToAction("TutorIndex", "Tutor");
             }

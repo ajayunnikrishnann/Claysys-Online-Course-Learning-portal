@@ -1,5 +1,4 @@
-﻿
-@model Claysys_Online_Course_Learning_portal.Models.User
+﻿@model Claysys_Online_Course_Learning_portal.Models.Tutor
 
 @{
     ViewBag.Title = "SignupTutor";
@@ -18,6 +17,7 @@
         {
             <h2 class="signupcolor">Tutor Sign up</h2>
             <div class="content">
+                @Html.HiddenFor(m => m.Role, new { value = "Tutor" })
                 <div class="input-row">
                     <div class="inputbox">
                         @Html.LabelFor(m => m.FirstName, "First name")
@@ -123,7 +123,7 @@
                         <div class="d-flex align-items-center">
                             <a href="@Url.Action("LoginTutor", "Tutor")" class="LoginButton">Already have an account? Login</a>
                         </div>
-                        </div>
+                    </div>
                 </div>
             </div>
         }

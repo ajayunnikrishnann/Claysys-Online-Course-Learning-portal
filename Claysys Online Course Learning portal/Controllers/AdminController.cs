@@ -307,7 +307,7 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
             }
         }
 
-
+        [AdminAuthorize]
         [HttpGet]
         public ActionResult ManageEnrollmentRequests()
         {
