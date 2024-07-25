@@ -8,7 +8,6 @@ body {
     position: relative;
 }
 
-
 /* Main container styles */
 .container {
     display: flex;
@@ -66,12 +65,16 @@ button {
         background-color: #45a049;
     }
 
-
-
 /* Address section */
 .address-section img {
     max-width: 100%;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     margin-bottom: 20px;
+}
+
+/* Error message styles */
+.error {
+    color: red;
+    font-size: 0.9em;
 }

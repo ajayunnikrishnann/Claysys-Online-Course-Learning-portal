@@ -40,65 +40,95 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
         [HttpGet]
         public ActionResult Signup()
         {
-            PopulateStateAndCityLists(); // Sync method for initial load
-            return View();
+            try
+            {
+                PopulateStateAndCityLists(); // Sync method for initial load
+                return View();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return View("Error");
+            }
         }
 
         [HttpPost]
         public ActionResult Signup(User user)
         {
-            if (ModelState.IsValid)
+            try
             {
-                user.Password = HashPassword(user.Password);
-                user.ConfirmPassword = user.Password;
+                if (ModelState.IsValid)
+                {
+                    user.Password = HashPassword(user.Password);
+                    user.ConfirmPassword = user.Password;
 
-                _userDataAccess.InsertUser(user);
-                return RedirectToAction("Login");
+                    _userDataAccess.InsertUser(user);
+                    return RedirectToAction("Login");
+                }
+
+                PopulateStateAndCityLists(); // Sync method for redisplaying form
+                return View(user);
             }
-
-            PopulateStateAndCityLists(); // Sync method for redisplaying form
-            return View(user);
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return View("Error");
+            }
         }
-
         
         [HttpGet]
         public ActionResult Login()
         {
-            return View();
+            try
+            {
+                return View();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return View("Error");
+            }
         }
 
         [HttpPost]
         public ActionResult Login(string username, string password)
         {
-            var user = _userDataAccess.GetUserByUsername(username);
-
-
-            if (user == null)
+            try
             {
-                ModelState.AddModelError("UsernameNotFound", "Username not found.");
-                return View();
-            }
+                var user = _userDataAccess.GetUserByUsername(username);
 
-            if (!VerifyPassword(password, user.Password))
+
+                if (user == null)
+                {
+                    ModelState.AddModelError("UsernameNotFound", "Username not found.");
+                    return View();
+                }
+
+                if (!VerifyPassword(password, user.Password))
+                {
+                    ModelState.AddModelError("PasswordIncorrect", "Incorrect password.");
+                    return View();
+                }
+
+                FormsAuthentication.SetAuthCookie(user.Username, false);
+
+                var ticket = new FormsAuthenticationTicket(1, user.Username, DateTime.Now, DateTime.Now.AddMinutes(30), false, "User");
+                string encryptedTicket = FormsAuthentication.Encrypt(ticket);
+                var authCookie = new HttpCookie(".AspNetUserAuth", encryptedTicket);
+                Response.Cookies.Add(authCookie);
+
+                Session["UserID"] = user.UserID;
+                Session["Username"] = user.Username;
+                Session["Email"] = user.Email;  // Store email in session
+                Session["PhoneNumber"] = user.Phone;  // Store phone number in session
+
+                return RedirectToAction("Index", "Account");
+            }
+            catch (Exception ex)
             {
-                ModelState.AddModelError("PasswordIncorrect", "Incorrect password.");
-                return View();
+                Console.WriteLine(ex.Message);
+                return View("Error");
             }
-
-            FormsAuthentication.SetAuthCookie(user.Username, false);
-
-            var ticket = new FormsAuthenticationTicket(1, user.Username, DateTime.Now, DateTime.Now.AddMinutes(30), false, "User");
-            string encryptedTicket = FormsAuthentication.Encrypt(ticket);
-            var authCookie = new HttpCookie(".AspNetUserAuth", encryptedTicket);
-            Response.Cookies.Add(authCookie);
-
-            Session["UserID"] = user.UserID;
-            Session["Username"] = user.Username;
-            Session["Email"] = user.Email;  // Store email in session
-            Session["PhoneNumber"] = user.Phone;  // Store phone number in session
-
-            return RedirectToAction("Index", "Account");
-                
         }
 
 
@@ -106,40 +136,48 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
         [HttpGet]
         public ActionResult Index()
         {
-            var courses = courseDataAccess.GetAllCourses();
-
-           
-
-            // Check if user is logged in
-            if (Session["Username"] != null)
+            try
             {
-                ViewBag.Username = Session["Username"].ToString();
-                ViewBag.IsLoggedIn = true;
+                var courses = courseDataAccess.GetAllCourses();
 
-                var userId = (int)Session["UserID"];
-                ViewBag.CurrentUserId = userId;
-                ViewBag.TutorID = Session["TutorID"];
 
-                ViewBag.EnrolledCourses = _enrollmentRequestDataAccess.GetEnrollmentRequestsByUserId(Convert.ToInt32(Session["UserID"])).Select(r => r.CourseId).ToList();
-                ViewBag.ApprovedCourses = _enrollmentRequestDataAccess.GetApprovedEnrollmentRequestsByUserId(Convert.ToInt32(Session["UserID"])).Select(r => r.CourseId).ToList();
 
+                // Check if user is logged in
+                if (Session["Username"] != null)
+                {
+                    ViewBag.Username = Session["Username"].ToString();
+                    ViewBag.IsLoggedIn = true;
+
+                    var userId = (int)Session["UserID"];
+                    ViewBag.CurrentUserId = userId;
+                    ViewBag.TutorID = Session["TutorID"];
+
+                    ViewBag.EnrolledCourses = _enrollmentRequestDataAccess.GetEnrollmentRequestsByUserId(Convert.ToInt32(Session["UserID"])).Select(r => r.CourseId).ToList();
+                    ViewBag.ApprovedCourses = _enrollmentRequestDataAccess.GetApprovedEnrollmentRequestsByUserId(Convert.ToInt32(Session["UserID"])).Select(r => r.CourseId).ToList();
+
+                }
+                else
+                {
+                    ViewBag.IsLoggedIn = false;
+                    ViewBag.EnrolledCourses = new List<int>(); // Empty list when the user is not logged in
+                    ViewBag.ApprovedCourses = new List<int>(); // Empty list when the user is not logged in
+                }
+
+                // Get reviews for each course
+                foreach (var course in courses)
+                {
+                    course.Reviews = courseDataAccess.GetReviewsByCourseId(course.CourseId);
+                }
+
+                return View(courses); // Ensure there is a corresponding Index.cshtml view in Views/Account
             }
-            else
+            catch (Exception ex)
             {
-                ViewBag.IsLoggedIn = false;
-                ViewBag.EnrolledCourses = new List<int>(); // Empty list when the user is not logged in
-                ViewBag.ApprovedCourses = new List<int>(); // Empty list when the user is not logged in
+                Console.WriteLine(ex.Message);
+                return View("Error");
             }
 
-            // Get reviews for each course
-            foreach (var course in courses)
-            {
-                course.Reviews = courseDataAccess.GetReviewsByCourseId(course.CourseId);
-            }
-
-            return View(courses); // Ensure there is a corresponding Index.cshtml view in Views/Account
         }
-
 
 
 
@@ -147,19 +185,27 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
         [AcceptVerbs(HttpVerbs.Get | HttpVerbs.Post)]
         public ActionResult Logout()
         {
-            Session.Abandon();
-
-            FormsAuthentication.SignOut();
-            var authCookie = Request.Cookies[".AspNetUserAuth"];
-            if (authCookie != null)
+            try
             {
-                authCookie.Expires = DateTime.Now.AddDays(-1);
-                Response.Cookies.Add(authCookie);
+                Session.Abandon();
+
+                FormsAuthentication.SignOut();
+                var authCookie = Request.Cookies[".AspNetUserAuth"];
+                if (authCookie != null)
+                {
+                    authCookie.Expires = DateTime.Now.AddDays(-1);
+                    Response.Cookies.Add(authCookie);
+                }
+
+                return RedirectToAction("Index", "Account");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return View("Error");
             }
 
-            return RedirectToAction("Index", "Account");
         }
-
 
         private bool IsUsernameTaken(string username)
         {
@@ -177,41 +223,67 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
         [HttpPost]
         public JsonResult ValidatePassword(string password)
         {
-            bool isValid = IsPasswordValid(password);
-            return Json(new { valid = isValid });
+            try
+            {
+                bool isValid = IsPasswordValid(password);
+                return Json(new { valid = isValid });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return Json(new { valid = false, error = ex.Message });
+            }
         }
-
 
         [HttpPost]
         public JsonResult CheckEmail(string value)
         {
-            var dataAccess = new UserDataAccess();
-            bool isAvailable = dataAccess.IsEmailAvailable(value);
-            return Json(new { available = isAvailable });
+            
+                var dataAccess = new UserDataAccess();
+                bool isAvailable = dataAccess.IsEmailAvailable(value);
+                return Json(new { available = isAvailable });
 
-        }
+            }
+           
 
         [HttpPost]
         public JsonResult CheckUsername(string value)
         {
-            var dataAccess = new UserDataAccess();
-            bool isAvailable = dataAccess.IsUsernameAvailable(value);
-            return Json(new { available = isAvailable });
-        }
-
+          
+                var dataAccess = new UserDataAccess();
+                bool isAvailable = dataAccess.IsUsernameAvailable(value);
+                return Json(new { available = isAvailable });
+            }
+           
+        
 
 
         [HttpPost]
         public JsonResult GetCities(string state)
         {
-            var cities = GetCitiesByState(state); // Sync method
-            return Json(cities);
+            try
+            {
+                var cities = GetCitiesByState(state); // Sync method
+                return Json(cities);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return Json(new { error = ex.Message });
+            }
         }
 
         private void PopulateStateAndCityLists()
         {
-            ViewBag.StateList = GetStates(); // Sync method
-            ViewBag.CityList = new List<SelectListItem>();
+            try
+            {
+                ViewBag.StateList = GetStates(); // Sync method
+                ViewBag.CityList = new List<SelectListItem>();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
 
         private List<SelectListItem> GetStates()
@@ -293,142 +365,190 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
         [HttpPost]
         public ActionResult DeleteReview(int reviewId, int courseId)
         {
-            var userId = User.Identity.Name; // Assuming User.Identity.Name uniquely identifies the user
-            if (courseDataAccess.IsReviewOwner(reviewId, userId))
+            try
             {
-                courseDataAccess.DeleteReview(reviewId, userId);
+                var userId = User.Identity.Name; // Assuming User.Identity.Name uniquely identifies the user
+                if (courseDataAccess.IsReviewOwner(reviewId, userId))
+                {
+                    courseDataAccess.DeleteReview(reviewId, userId);
+                }
+                return RedirectToAction("ViewDetail", new { id = courseId });
             }
-            return RedirectToAction("ViewDetail", new { id = courseId });
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return RedirectToAction("ViewDetail", new { id = courseId, error = "An error occurred while deleting the review." });
+            }
         }
 
         [HttpPost]
         public ActionResult EditReview(AddReviewViewModel model)
         {
-            if (ModelState.IsValid)
+            try
             {
-                var review = new Review
+                if (ModelState.IsValid)
                 {
-                    ReviewId = model.ReviewId,
-                    CourseId = model.CourseId,
-                    ReviewScore = model.ReviewScore,
-                    Comment = model.Comment,
-                    UserId = User.Identity.Name // Assuming User.Identity.Name uniquely identifies the user
-                };
+                    var review = new Review
+                    {
+                        ReviewId = model.ReviewId,
+                        CourseId = model.CourseId,
+                        ReviewScore = model.ReviewScore,
+                        Comment = model.Comment,
+                        UserId = User.Identity.Name // Assuming User.Identity.Name uniquely identifies the user
+                    };
 
-                if (courseDataAccess.IsReviewOwner(model.ReviewId, User.Identity.Name))
-                {
-                    courseDataAccess.UpdateReview(review);
+                    if (courseDataAccess.IsReviewOwner(model.ReviewId, User.Identity.Name))
+                    {
+                        courseDataAccess.UpdateReview(review);
+                    }
+                    return RedirectToAction("ViewDetail", new { id = model.CourseId });
                 }
-                return RedirectToAction("ViewDetail", new { id = model.CourseId });
+                return View(model);
             }
-            return View(model);
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return RedirectToAction("ViewDetail", new { id = model.CourseId, error = "An error occurred while editing the review." });
+            }
         }
 
         public ActionResult ViewDetail(int id)
         {
-            var course = courseDataAccess.GetCourseById(id);
-            if (course != null)
+            try
             {
-                course.Reviews = courseDataAccess.GetReviewsByCourseId(id);
+                var course = courseDataAccess.GetCourseById(id);
+                if (course != null)
+                {
+                    course.Reviews = courseDataAccess.GetReviewsByCourseId(id);
+                }
+                return View(course);
             }
-            return View(course);
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return RedirectToAction("Index", "Home", new { error = "An error occurred while retrieving course details." });
+            }
         }
 
 
         [HttpPost]
         public ActionResult AddReview(AddReviewViewModel model)
         {
-            if (ModelState.IsValid)
+            try
             {
-                var course = courseDataAccess.GetCourseById(model.CourseId);
-                if (course == null)
+                if (ModelState.IsValid)
                 {
-                    return HttpNotFound();
+                    var course = courseDataAccess.GetCourseById(model.CourseId);
+                    if (course == null)
+                    {
+                        return HttpNotFound();
+                    }
+
+                    var review = new Review
+                    {
+                        CourseId = model.CourseId,
+                        ReviewScore = model.ReviewScore,
+                        Comment = model.Comment,
+                        UserId = User.Identity.Name // Assuming User.Identity.Name uniquely identifies the user
+                    };
+
+                    courseDataAccess.AddReview(review);
+
+                    return RedirectToAction("ViewDetail", new { id = model.CourseId });
                 }
 
-                var review = new Review
-                {
-                    CourseId = model.CourseId,
-                    ReviewScore = model.ReviewScore,
-                    Comment = model.Comment,
-                    UserId = User.Identity.Name // Assuming User.Identity.Name uniquely identifies the user
-                };
-
-                courseDataAccess.AddReview(review);
-
-                return RedirectToAction("ViewDetail", new { id = model.CourseId });
+                // Handle the case where the model state is invalid
+                return View(model);
             }
-
-            // Handle the case where the model state is invalid
-            return View(model);
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return RedirectToAction("ViewDetail", new { id = model.CourseId, error = "An error occurred while adding the review." });
+            }
         }
 
         [HttpPost]
         public JsonResult RequestEnrollment(int courseId)
         {
-            if (Session["UserID"] == null)
+            try
             {
-                return Json(new { success = false, message = "User is not logged in." });
+                if (Session["UserID"] == null)
+                {
+                    return Json(new { success = false, message = "User is not logged in." });
+                }
+
+                int userId = (int)Session["UserID"];
+                var username = Session["Username"].ToString();
+                var email = Session["Email"].ToString();
+                var phoneNumber = Session["PhoneNumber"].ToString();
+
+                // Get the course title using the courseId
+                var course = courseDataAccess.GetCourseById(courseId);
+                if (course == null)
+                {
+                    return Json(new { success = false, message = "Course not found." });
+                }
+
+                var enrollmentRequest = new EnrollmentRequest
+                {
+                    UserId = userId,
+                    CourseId = courseId,
+                    CourseTitle = course.Title,
+                    Username = username,
+                    Email = email,
+                    PhoneNumber = phoneNumber,
+                    RequestDate = DateTime.Now,
+                    IsApproved = false,
+                    IsRejected = false
+                };
+
+                _enrollmentRequestDataAccess.InsertEnrollmentRequest(enrollmentRequest);
+
+                return Json(new { success = true });
             }
-
-            int userId = (int)Session["UserID"];
-            var username = Session["Username"].ToString();
-            var email = Session["Email"].ToString();
-            var phoneNumber = Session["PhoneNumber"].ToString();
-
-            // Get the course title using the courseId
-            var course = courseDataAccess.GetCourseById(courseId);
-            if (course == null)
+            catch (Exception ex)
             {
-                return Json(new { success = false, message = "Course not found." });
+                Console.WriteLine(ex.Message);
+                return Json(new { success = false, message = "An error occurred while requesting enrollment." });
             }
-
-            var enrollmentRequest = new EnrollmentRequest
-            {
-                UserId = userId,
-                CourseId = courseId,
-                CourseTitle = course.Title,
-                Username = username,
-                Email = email,
-                PhoneNumber = phoneNumber,
-                RequestDate = DateTime.Now,
-                IsApproved = false,
-                IsRejected = false
-            };
-
-            _enrollmentRequestDataAccess.InsertEnrollmentRequest(enrollmentRequest);
-
-            return Json(new { success = true });
         }
 
         [HttpPost]
         public JsonResult GetEnrollmentStatus(int courseId)
         {
-            if (Session["UserID"] == null)
+            try
             {
-                return Json(new { success = false, message = "User is not logged in." });
+                if (Session["UserID"] == null)
+                {
+                    return Json(new { success = false, message = "User is not logged in." });
+                }
+
+                int userId = (int)Session["UserID"];
+                var enrollmentRequests = _enrollmentRequestDataAccess.GetEnrollmentRequestsByUserId(userId);
+                var request = enrollmentRequests.FirstOrDefault(r => r.CourseId == courseId);
+
+                if (request == null)
+                {
+                    return Json(new { success = true, status = "Not Enrolled" });
+                }
+
+                if (request.IsApproved)
+                {
+                    return Json(new { success = true, status = "Approved" });
+                }
+
+                if (request.IsRejected)
+                {
+                    return Json(new { success = true, status = "Rejected" });
+                }
+
+                return Json(new { success = true, status = "Enrollment Requested" });
             }
-
-            int userId = (int)Session["UserID"];
-            var enrollmentRequests = _enrollmentRequestDataAccess.GetEnrollmentRequestsByUserId(userId);
-            var request = enrollmentRequests.FirstOrDefault(r => r.CourseId == courseId);
-
-            if (request == null)
+            catch (Exception ex)
             {
-                return Json(new { success = true, status = "Not Enrolled" });
+                Console.WriteLine(ex.Message);
+                return Json(new { success = false, message = "An error occurred while getting enrollment status." });
             }
-
-            if (request.IsApproved)
-            {
-                return Json(new { success = true, status = "Approved" });
-            }
-
-            if (request.IsRejected)
-            {
-                return Json(new { success = true, status = "Rejected" });
-            }
-
-            return Json(new { success = true, status = "Enrollment Requested" });
         }
 
     }

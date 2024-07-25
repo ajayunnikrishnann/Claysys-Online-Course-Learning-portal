@@ -12,14 +12,13 @@
 </head>
 <body>
 
-    
     <!-- Main content container -->
     <div class="container">
         <!-- Contact form section -->
         <div class="contact-section">
             <h1>Contact Us</h1>
             <!-- Contact form -->
-            <form action="#" method="post" onsubmit="return validateForm()">
+            <form id="contactForm" action="#" method="post">
                 <label for="username">Name</label>
                 <input type="text" id="username" name="username">
                 <span id="usernameError" class="error"></span>
@@ -52,6 +51,7 @@
         </div>
     </div>
 
-  
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="~/Scripts/ContactValidation.js"></script>
 </body>
 </html>
