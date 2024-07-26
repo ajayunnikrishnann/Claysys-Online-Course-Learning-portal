@@ -17,6 +17,7 @@ namespace Claysys_Online_Course_Learning_portal.DataAccess
     {
         private readonly string _connectionString = ConfigurationManager.ConnectionStrings["MyAppDbContext"].ConnectionString;
 
+        // Insert a new course into the database
         public void InsertCourse(Course course)
         {
             string connectionString = ConfigurationManager.ConnectionStrings["MyAppDbContext"].ConnectionString;
@@ -27,7 +28,7 @@ namespace Claysys_Online_Course_Learning_portal.DataAccess
                     cmd.CommandType = CommandType.StoredProcedure;
 
                     cmd.Parameters.AddWithValue("@Title", course.Title);
-                    cmd.Parameters.AddWithValue("@Description", course.Description);  // Add this line
+                    cmd.Parameters.AddWithValue("@Description", course.Description);  
                     cmd.Parameters.AddWithValue("@SmallVideoPath", course.SmallVideoPath);
                     cmd.Parameters.AddWithValue("@ImageBase64", course.ImageBase64);
 
@@ -41,6 +42,7 @@ namespace Claysys_Online_Course_Learning_portal.DataAccess
         }
 
 
+        // Retrieve all courses from the database that are not marked as deleted
         public List<Course> GetAllCourses()
         {
             var courses = new List<Course>();
@@ -79,7 +81,7 @@ namespace Claysys_Online_Course_Learning_portal.DataAccess
             return courses;
         }
 
-
+        // Retrieve a specific course by its ID
         public Course GetCourseById(int courseId)
         {
             Course course = null;
@@ -112,7 +114,7 @@ namespace Claysys_Online_Course_Learning_portal.DataAccess
             return course;
         }
 
-
+        // Update an existing course in the database
         public void UpdateCourse(Course course)
         {
             using (SqlConnection con = new SqlConnection(_connectionString))
@@ -157,7 +159,7 @@ namespace Claysys_Online_Course_Learning_portal.DataAccess
             }
         }
 
-
+        // Soft delete a course by marking it as deleted
         public void DeleteCourse(int courseId)
         {
             using (SqlConnection con = new SqlConnection(_connectionString))
@@ -173,7 +175,7 @@ namespace Claysys_Online_Course_Learning_portal.DataAccess
         }
 
 
-
+        // Add a new review to a course
         public void AddReview(Review review)
         {
             using (SqlConnection con = new SqlConnection(_connectionString))
@@ -189,11 +191,13 @@ namespace Claysys_Online_Course_Learning_portal.DataAccess
                     con.Open();
                     cmd.ExecuteNonQuery();
 
+                    // Update the average review score of the course
                     UpdateCourseAverageReviewScore(review.CourseId);
                 }
             }
         }
 
+        // Delete a review by its ID and the user who created it
         public void DeleteReview(int reviewId, string userId)
         {
             using (SqlConnection con = new SqlConnection(_connectionString))
@@ -210,6 +214,7 @@ namespace Claysys_Online_Course_Learning_portal.DataAccess
             }
         }
 
+        // Retrieve all reviews for a specific course
         public List<Review> GetReviewsByCourseId(int courseId)
         {
             var reviews = new List<Review>();
@@ -246,6 +251,7 @@ namespace Claysys_Online_Course_Learning_portal.DataAccess
             return reviews;
         }
 
+        // Retrieve a course along with its reviews by course ID
         public Course GetCourseWithReviewsById(int courseId)
         {
             Course course = null;
@@ -310,7 +316,7 @@ namespace Claysys_Online_Course_Learning_portal.DataAccess
             return course;
         }
 
-
+        // Update an existing review in the database
         public void UpdateReview(Review review)
         {
             using (SqlConnection con = new SqlConnection(_connectionString))
@@ -329,6 +335,7 @@ namespace Claysys_Online_Course_Learning_portal.DataAccess
             }
         }
 
+        // Check if the specified user is the owner of the given review
         public bool IsReviewOwner(int reviewId, string userId)
         {
             using (SqlConnection con = new SqlConnection(_connectionString))
@@ -345,6 +352,7 @@ namespace Claysys_Online_Course_Learning_portal.DataAccess
             }
         }
 
+        // Get the average review score for a specific course
         public decimal GetAverageReviewScore(int courseId)
         {
             using (SqlConnection con = new SqlConnection(_connectionString))
@@ -364,6 +372,7 @@ namespace Claysys_Online_Course_Learning_portal.DataAccess
             }
         }
 
+        // Update the average review score of a course
         public void UpdateCourseAverageReviewScore(int courseId)
         {
             using (SqlConnection con = new SqlConnection(_connectionString))
@@ -386,7 +395,7 @@ namespace Claysys_Online_Course_Learning_portal.DataAccess
             }
         }
 
-
+        // Check if a user is enrolled in a specific course
         public bool IsUserEnrolledInCourse(int userId, int courseId)
         {
             string query = "SELECT COUNT(*) FROM Enrollments WHERE UserId = @UserId AND CourseId = @CourseId";

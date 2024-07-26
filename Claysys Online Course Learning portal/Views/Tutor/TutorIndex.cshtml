@@ -6,7 +6,6 @@
 }
 
 @section styles {
-
     <link href="~/Content/TutorIndex.css" rel="stylesheet" type="text/css" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
 }
@@ -35,18 +34,20 @@
             $('.enrollButton').click(function () {
                 var courseId = $(this).data('course-id');
                 var isUserLoggedIn = @(Session["UserID"] != null ? "true" : "false");
+                var isTutorLoggedIn = @(Session["TutorID"] != null ? "true" : "false");
                 var isAlreadyEnrolled = $(this).text() === "Already Enrolled";
 
-                console.log('Enroll button clicked');
-                if (!isUserLoggedIn) {
+                if (!isUserLoggedIn && !isTutorLoggedIn) {
                     toastr.warning('You need to log in to enroll in a course.');
                     return;
                 }
 
-                if (isAlreadyEnrolled) {
-                    toastr.info('You are already enrolled in this course.');
+                if (isTutorLoggedIn && !isUserLoggedIn) {
+                    toastr.warning('You can enroll only after logging in as a user.');
                     return;
                 }
+
+              
 
                 $('#confirmEnrollButton').data('course-id', courseId); // Store courseId in the modal button
                 $('#enrollModal').modal('show'); // Show the modal
@@ -54,13 +55,11 @@
 
             $('#confirmEnrollButton').click(function () {
                 var courseId = $(this).data('course-id');
-                console.log('Confirm enroll button clicked with course ID:', courseId);
                 $.ajax({
                     url: '@Url.Action("Enroll", "Account")',
                     type: 'POST',
                     data: { courseId: courseId },
                     success: function (response) {
-                        console.log('AJAX call successful', response);
                         if (response.success) {
                             window.location.href = '@Url.Action("ViewDetail", "Account")?id=' + courseId;
                         } else {
@@ -72,8 +71,7 @@
                         }
                     },
                     error: function (xhr, status, error) {
-                        console.error('AJAX call failed', xhr, status, error);
-                        toastr.error('An error occurred during the request.');
+                        toastr.error('You can enroll only after logging in as a user.');
                     }
                 });
             });
@@ -141,7 +139,6 @@
         </div>
     </div>
 </div>
-   
 
 <div class="modal fade" id="enrollModal" tabindex="-1" aria-labelledby="enrollModalLabel" aria-hidden="true">
     <div class="modal-dialog">

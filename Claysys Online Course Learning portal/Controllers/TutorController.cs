@@ -21,6 +21,7 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
 
         private readonly CourseDataAccess _courseDataAccess;
         private readonly UserDataAccess _userDataAccess = new UserDataAccess();
+        private readonly EnrollmentRequestDataAccess _enrollmentRequestDataAccess = new EnrollmentRequestDataAccess(ConfigurationManager.ConnectionStrings["MyAppDbContext"].ConnectionString);
         private readonly string _connectionString = ConfigurationManager.ConnectionStrings["MyAppDbContext"].ConnectionString;
         public TutorController()
         {
@@ -270,6 +271,8 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
         {
             return BCrypt.Net.BCrypt.Verify(password, hashedPassword);
         }
+
+        
 
     }
 }

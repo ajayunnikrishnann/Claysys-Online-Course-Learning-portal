@@ -18,31 +18,30 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
 {
     public class AccountController : Controller
     {
-       
-
-
         private readonly UserDataAccess _userDataAccess = new UserDataAccess();
         private CourseDataAccess courseDataAccess = new CourseDataAccess();
         private readonly EnrollmentRequestDataAccess _enrollmentRequestDataAccess = new EnrollmentRequestDataAccess(ConfigurationManager.ConnectionStrings["MyAppDbContext"].ConnectionString);
 
 
-
+        // Action to render the About page
         public ActionResult About()
         {
             return View();
         }
 
+        // Action to render the Contact page
         public ActionResult Contact()
         {
             return View();
         }
 
+        // GET: Action to render the Signup page
         [HttpGet]
         public ActionResult Signup()
         {
             try
             {
-                PopulateStateAndCityLists(); // Sync method for initial load
+                PopulateStateAndCityLists(); // Load states and cities for dropdowns
                 return View();
             }
             catch (Exception ex)
@@ -52,6 +51,7 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
             }
         }
 
+        // POST: Action to handle the Signup form submission
         [HttpPost]
         public ActionResult Signup(User user)
         {
@@ -59,14 +59,14 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    user.Password = HashPassword(user.Password);
+                    user.Password = HashPassword(user.Password); // Hash the password
                     user.ConfirmPassword = user.Password;
 
-                    _userDataAccess.InsertUser(user);
+                    _userDataAccess.InsertUser(user); // Insert user into the database
                     return RedirectToAction("Login");
                 }
 
-                PopulateStateAndCityLists(); // Sync method for redisplaying form
+                PopulateStateAndCityLists(); // Reload states and cities if model state is invalid
                 return View(user);
             }
             catch (Exception ex)
@@ -75,7 +75,8 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
                 return View("Error");
             }
         }
-        
+
+        // GET: Action to render the Login page
         [HttpGet]
         public ActionResult Login()
         {
@@ -90,6 +91,7 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
             }
         }
 
+        // POST: Action to handle the Login form submission
         [HttpPost]
         public ActionResult Login(string username, string password)
         {
@@ -110,7 +112,7 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
                     return View();
                 }
 
-                FormsAuthentication.SetAuthCookie(user.Username, false);
+                FormsAuthentication.SetAuthCookie(user.Username, false); // Set auth cookie
 
                 var ticket = new FormsAuthenticationTicket(1, user.Username, DateTime.Now, DateTime.Now.AddMinutes(30), false, "User");
                 string encryptedTicket = FormsAuthentication.Encrypt(ticket);
@@ -118,7 +120,7 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
                 Response.Cookies.Add(authCookie);
 
                 Session["UserID"] = user.UserID;
-                Session["Username"] = user.Username;
+                Session["Username"] = user.Username; // Store username in session
                 Session["Email"] = user.Email;  // Store email in session
                 Session["PhoneNumber"] = user.Phone;  // Store phone number in session
 
@@ -132,7 +134,7 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
         }
 
 
-
+        // GET: Action to render the Index page (user dashboard)
         [HttpGet]
         public ActionResult Index()
         {
@@ -169,7 +171,7 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
                     course.Reviews = courseDataAccess.GetReviewsByCourseId(course.CourseId);
                 }
 
-                return View(courses); // Ensure there is a corresponding Index.cshtml view in Views/Account
+                return View(courses); 
             }
             catch (Exception ex)
             {
@@ -181,7 +183,7 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
 
 
 
-
+        // Action to handle user logout
         [AcceptVerbs(HttpVerbs.Get | HttpVerbs.Post)]
         public ActionResult Logout()
         {
@@ -207,19 +209,23 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
 
         }
 
+        // Method to check if a username is taken
         private bool IsUsernameTaken(string username)
         {
             // Implement your logic to check if the username exists
             return false;
         }
 
+        // Method to validate password format
+
         private bool IsPasswordValid(string password)
         {
-            // Implement your logic to check the password format
+            
             var regex = new Regex("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$");
             return regex.IsMatch(password);
         }
 
+        // POST: Action to validate password via AJAX
         [HttpPost]
         public JsonResult ValidatePassword(string password)
         {
@@ -235,6 +241,7 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
             }
         }
 
+        // POST: Action to check if an email is available via AJAX
         [HttpPost]
         public JsonResult CheckEmail(string value)
         {
@@ -244,8 +251,9 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
                 return Json(new { available = isAvailable });
 
             }
-           
 
+
+        // POST: Action to check if a username is available via AJAX
         [HttpPost]
         public JsonResult CheckUsername(string value)
         {
@@ -254,16 +262,16 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
                 bool isAvailable = dataAccess.IsUsernameAvailable(value);
                 return Json(new { available = isAvailable });
             }
-           
-        
 
 
+
+        // POST: Action to get cities based on selected state via AJAX
         [HttpPost]
         public JsonResult GetCities(string state)
         {
             try
             {
-                var cities = GetCitiesByState(state); // Sync method
+                var cities = GetCitiesByState(state); // Load cities for selected state
                 return Json(cities);
             }
             catch (Exception ex)
@@ -273,11 +281,12 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
             }
         }
 
+        // Method to populate state and city dropdown lists
         private void PopulateStateAndCityLists()
         {
             try
             {
-                ViewBag.StateList = GetStates(); // Sync method
+                ViewBag.StateList = GetStates(); // Load states
                 ViewBag.CityList = new List<SelectListItem>();
             }
             catch (Exception ex)
@@ -286,6 +295,7 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
             }
         }
 
+        // Method to get a list of states (static data)
         private List<SelectListItem> GetStates()
         {
             // Static list of states in India
@@ -323,6 +333,7 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
             return states;
         }
 
+        // Method to get a list of cities based on selected state (static data)
         private List<SelectListItem> GetCitiesByState(string state)
         {
             // Static list of cities for selected state
@@ -349,11 +360,13 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
             return cities;
         }
 
+        // Method to hash passwords using BCrypt
         private string HashPassword(string password)
         {
             return BCrypt.Net.BCrypt.HashPassword(password);
         }
 
+        // Method to verify password against the hash
         private bool VerifyPassword(string password, string hashedPassword)
         {
             return BCrypt.Net.BCrypt.Verify(password, hashedPassword);
@@ -361,31 +374,40 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
 
 
 
-
+        // POST: Action to handle review deletion
         [HttpPost]
         public ActionResult DeleteReview(int reviewId, int courseId)
         {
             try
             {
+                // Get the currently logged-in user's ID
                 var userId = User.Identity.Name; // Assuming User.Identity.Name uniquely identifies the user
+
+                // Check if the current user is the owner of the review
                 if (courseDataAccess.IsReviewOwner(reviewId, userId))
                 {
+                    // Delete the review from the database
                     courseDataAccess.DeleteReview(reviewId, userId);
                 }
+                // Redirect to the course detail view after deletion
                 return RedirectToAction("ViewDetail", new { id = courseId });
             }
             catch (Exception ex)
             {
+                // Log the error message
                 Console.WriteLine(ex.Message);
+                // Redirect to the course detail view with an error message
                 return RedirectToAction("ViewDetail", new { id = courseId, error = "An error occurred while deleting the review." });
             }
         }
 
+        // POST: Action to handle review editing
         [HttpPost]
         public ActionResult EditReview(AddReviewViewModel model)
         {
             try
             {
+                // Check if the model state is valid
                 if (ModelState.IsValid)
                 {
                     var review = new Review
@@ -397,12 +419,16 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
                         UserId = User.Identity.Name // Assuming User.Identity.Name uniquely identifies the user
                     };
 
+                    // Check if the current user is the owner of the review
                     if (courseDataAccess.IsReviewOwner(model.ReviewId, User.Identity.Name))
                     {
+                        // Update the review in the database
                         courseDataAccess.UpdateReview(review);
                     }
+                    // Redirect to the course detail view after editing
                     return RedirectToAction("ViewDetail", new { id = model.CourseId });
                 }
+                // Return the view with the model if the model state is not valid
                 return View(model);
             }
             catch (Exception ex)
@@ -412,13 +438,16 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
             }
         }
 
+        // GET: Action to view course details
         public ActionResult ViewDetail(int id)
         {
             try
             {
+                // Get the course details by ID
                 var course = courseDataAccess.GetCourseById(id);
                 if (course != null)
                 {
+                    // Get the reviews for the course
                     course.Reviews = courseDataAccess.GetReviewsByCourseId(id);
                 }
                 return View(course);
@@ -431,17 +460,20 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
         }
 
 
+        // POST: Action to handle review addition
         [HttpPost]
         public ActionResult AddReview(AddReviewViewModel model)
         {
             try
             {
+                // Check if the model state is valid
                 if (ModelState.IsValid)
                 {
+                    // Get the course details by ID
                     var course = courseDataAccess.GetCourseById(model.CourseId);
                     if (course == null)
                     {
-                        return HttpNotFound();
+                        return HttpNotFound(); // Return 404 if course not found
                     }
 
                     var review = new Review
@@ -452,6 +484,7 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
                         UserId = User.Identity.Name // Assuming User.Identity.Name uniquely identifies the user
                     };
 
+                    // Add the review to the database
                     courseDataAccess.AddReview(review);
 
                     return RedirectToAction("ViewDetail", new { id = model.CourseId });
@@ -467,11 +500,13 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
             }
         }
 
+        // POST: Action to handle enrollment request
         [HttpPost]
         public JsonResult RequestEnrollment(int courseId)
         {
             try
             {
+                // Check if the user is logged in
                 if (Session["UserID"] == null)
                 {
                     return Json(new { success = false, message = "User is not logged in." });
@@ -502,6 +537,7 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
                     IsRejected = false
                 };
 
+                // Insert the enrollment request into the database
                 _enrollmentRequestDataAccess.InsertEnrollmentRequest(enrollmentRequest);
 
                 return Json(new { success = true });
@@ -513,17 +549,20 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
             }
         }
 
+        // POST: Action to get the enrollment status
         [HttpPost]
         public JsonResult GetEnrollmentStatus(int courseId)
         {
             try
             {
+                // Check if the user is logged in
                 if (Session["UserID"] == null)
                 {
                     return Json(new { success = false, message = "User is not logged in." });
                 }
 
                 int userId = (int)Session["UserID"];
+                // Get the enrollment requests for the user
                 var enrollmentRequests = _enrollmentRequestDataAccess.GetEnrollmentRequestsByUserId(userId);
                 var request = enrollmentRequests.FirstOrDefault(r => r.CourseId == courseId);
 
@@ -550,6 +589,20 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
                 return Json(new { success = false, message = "An error occurred while getting enrollment status." });
             }
         }
+
+        // GET: Action to check if the user is logged in
+        public ActionResult CheckSession()
+        {
+            if (Session["Username"] != null)
+            {
+                return Json(new { isLoggedIn = true }, JsonRequestBehavior.AllowGet);
+            }
+            else
+            {
+                return Json(new { isLoggedIn = false }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
 
     }
 }
