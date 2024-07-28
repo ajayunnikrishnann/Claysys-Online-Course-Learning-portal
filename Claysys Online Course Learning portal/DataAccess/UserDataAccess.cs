@@ -166,7 +166,6 @@ namespace Claysys_Online_Course_Learning_portal.DataAccess
         }
 
 
-        // Method to check if an email is available (not already used by another user)
         public bool IsEmailAvailable(string email)
         {
             using (SqlConnection connection = new SqlConnection(_connectionString))
@@ -176,9 +175,11 @@ namespace Claysys_Online_Course_Learning_portal.DataAccess
                 string query = "SELECT COUNT(*) FROM Users WHERE Email = @Email";
                 using (SqlCommand command = new SqlCommand(query, connection))
                 {
-                    command.Parameters.AddWithValue("@Email", email);
-                    int count = (int)command.ExecuteScalar();
-                    return count == 0; // Return true if no users found with the given username
+                    // Explicitly define the parameter and its type
+                    command.Parameters.Add(new SqlParameter("@Email", SqlDbType.NVarChar) { Value = email });
+
+                    int count = Convert.ToInt32(command.ExecuteScalar());
+                    return count == 0; // Return true if no users found with the given email
                 }
             }
         }

@@ -12,6 +12,8 @@ using System.Web.Security;
 using System.Net;
 using System.Web.Configuration;
 using System.Configuration;
+using Claysys_Online_Course_Learning_portal.Utilities;
+
 
 
 namespace Claysys_Online_Course_Learning_portal.Controllers
@@ -46,7 +48,7 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Logger.LogError(ex);
                 return View("Error");
             }
         }
@@ -59,20 +61,27 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    user.Password = HashPassword(user.Password); // Hash the password
+                    if (_userDataAccess.IsEmailAvailable(user.Email))
+                    {
+                        user.Password = HashPassword(user.Password); // Hash the password
                     user.ConfirmPassword = user.Password;
 
                     _userDataAccess.InsertUser(user); // Insert user into the database
                     return RedirectToAction("Login");
                 }
+                    else
+                    {
+                        ModelState.AddModelError("Email", "Email is already in use.");
+                    }
+                    }
 
-                PopulateStateAndCityLists(); // Reload states and cities if model state is invalid
+                    PopulateStateAndCityLists(); // Reload states and cities if model state is invalid
                 return View(user);
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
-                return View("Error");
+                Logger.LogError(ex);
+                return Json(new { success = false, message = "An error occurred during signup." });
             }
         }
 
@@ -86,7 +95,7 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Logger.LogError(ex);
                 return View("Error");
             }
         }
@@ -128,7 +137,7 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Logger.LogError(ex);
                 return View("Error");
             }
         }
@@ -175,7 +184,7 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Logger.LogError(ex);
                 return View("Error");
             }
 
@@ -203,7 +212,7 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Logger.LogError(ex);
                 return View("Error");
             }
 
@@ -212,7 +221,7 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
         // Method to check if a username is taken
         private bool IsUsernameTaken(string username)
         {
-            // Implement your logic to check if the username exists
+           
             return false;
         }
 
@@ -236,7 +245,7 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Logger.LogError(ex);
                 return Json(new { valid = false, error = ex.Message });
             }
         }
@@ -276,7 +285,7 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Logger.LogError(ex);
                 return Json(new { error = ex.Message });
             }
         }
@@ -291,7 +300,7 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Logger.LogError(ex);
             }
         }
 
@@ -394,9 +403,7 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
             }
             catch (Exception ex)
             {
-                // Log the error message
-                Console.WriteLine(ex.Message);
-                // Redirect to the course detail view with an error message
+                Logger.LogError(ex);
                 return RedirectToAction("ViewDetail", new { id = courseId, error = "An error occurred while deleting the review." });
             }
         }
@@ -433,7 +440,7 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Logger.LogError(ex);
                 return RedirectToAction("ViewDetail", new { id = model.CourseId, error = "An error occurred while editing the review." });
             }
         }
@@ -454,7 +461,7 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Logger.LogError(ex);
                 return RedirectToAction("Index", "Home", new { error = "An error occurred while retrieving course details." });
             }
         }
@@ -495,7 +502,7 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Logger.LogError(ex);
                 return RedirectToAction("ViewDetail", new { id = model.CourseId, error = "An error occurred while adding the review." });
             }
         }
@@ -544,7 +551,7 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Logger.LogError(ex);
                 return Json(new { success = false, message = "An error occurred while requesting enrollment." });
             }
         }
@@ -585,7 +592,7 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Logger.LogError(ex);
                 return Json(new { success = false, message = "An error occurred while getting enrollment status." });
             }
         }
@@ -603,7 +610,7 @@ namespace Claysys_Online_Course_Learning_portal.Controllers
             }
         }
 
-
+            
     }
 }
 
